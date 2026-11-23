@@ -8,3 +8,7 @@ inbox/
 *.key
 runtime-output/
 delivery/*.tar
+dist/
+release/
+delivery/*.exe
+delivery/dockcheck-linux-amd64

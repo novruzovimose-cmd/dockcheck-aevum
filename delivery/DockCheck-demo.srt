@@ -1,0 +1,106 @@
+1
+00:00:00,000 --> 00:00:01,965
+A produce buyer funds one route.
+
+2
+00:00:01,965 --> 00:00:05,832
+A carrier gets paid for each crate the receiving dock accepts.
+
+3
+00:00:05,832 --> 00:00:10,650
+This recorded local run shows the same Solidity contract packaged
+for Aevum.
+
+4
+00:00:10,650 --> 00:00:13,135
+The buyer locks four point five test units.
+
+5
+00:00:13,135 --> 00:00:14,318
+The carrier is fixed.
+
+6
+00:00:14,318 --> 00:00:17,690
+The station and payment agent have different signing keys.
+
+7
+00:00:17,690 --> 00:00:22,245
+Each crate earns one eighth of a unit, with at most twelve crates
+per ticket.
+
+8
+00:00:22,245 --> 00:00:24,009
+The station accepts six crates.
+
+9
+00:00:24,009 --> 00:00:27,715
+The measured range is two point four to six point seven degrees.
+
+10
+00:00:27,715 --> 00:00:32,537
+The agent checks the signed report against the permitted two to
+eight degree range.
+
+11
+00:00:32,537 --> 00:00:35,125
+The quoted freight is zero point seven five.
+
+12
+00:00:35,125 --> 00:00:42,033
+The contract checks both signatures and the lot identifier, then
+transfers seven hundred fifty thousand base units.
+
+13
+00:00:42,033 --> 00:00:47,305
+A separate verifier checks the token event, the canonical block,
+and the signed ticket.
+
+14
+00:00:47,305 --> 00:00:50,015
+The next load reaches ten point three degrees.
+
+15
+00:00:50,015 --> 00:00:51,761
+It exceeds the agreed ceiling.
+
+16
+00:00:51,761 --> 00:00:54,651
+The agent calls the contract to check the ticket.
+
+17
+00:00:54,651 --> 00:00:58,445
+The check rejects the load before any transaction is broadcast.
+
+18
+00:00:58,445 --> 00:01:01,670
+Now the station retries the first signed receipt.
+
+19
+00:01:01,670 --> 00:01:03,685
+The lot is already marked paid.
+
+20
+00:01:03,685 --> 00:01:05,432
+No second transfer is sent.
+
+21
+00:01:05,432 --> 00:01:09,530
+The carrier keeps exactly the original zero point seven five.
+
+22
+00:01:09,530 --> 00:01:11,217
+The buyer revokes the route.
+
+23
+00:01:11,217 --> 00:01:15,528
+Three point seven five returns to the buyer, and escrow falls to
+zero.
+
+24
+00:01:15,528 --> 00:01:18,839
+The original payment remains independently verifiable.
+
+25
+00:01:18,839 --> 00:01:23,650
+The archive includes the signed evidence and a command to
+reproduce this run.

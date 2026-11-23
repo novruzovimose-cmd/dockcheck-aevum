@@ -1,15 +1,16 @@
-import { getAddress, keccak256 } from "ethers";
+import { keccak256 } from "ethers";
 import {
   asJSON,
   deployDesk,
-  demoTerms,
   head,
   net,
   parseEvent,
   randomId,
   routeId,
 } from "../src/protocol.mjs";
-import { attached, fail, live, need, wallet } from "./live-lib.mjs";
+import { routeTerms } from "../src/route-terms.mjs";
+import { exactToken } from "../src/audit.mjs";
+import { attached, fail, live, need, wallet, readJSON } from "./live-lib.mjs";
 async function run() {
   const cmd = process.argv[2];
   if (
@@ -97,14 +98,28 @@ async function run() {
     );
     return;
   }
-  const t = demoTerms(
-    ...["CARRIER_ADDRESS", "STATION_ADDRESS", "AGENT_ADDRESS"].map((k) =>
-      getAddress(need(k)),
-    ),
+  const config = process.env.ROUTE_POLICY_FILE
+    ? readJSON(process.env.ROUTE_POLICY_FILE)
+    : {
+        budget: "4.50",
+        unitPrice: "0.125",
+        maxCrates: 12,
+        lowC: 2,
+        highC: 8,
+        hours: 24,
+      };
+  const t = routeTerms(
+    {
+      ...config,
+      carrier: need("CARRIER_ADDRESS"),
+      station: need("STATION_ADDRESS"),
+      agent: need("AGENT_ADDRESS"),
+    },
     await head(provider),
+    c.target,
   );
-  if ((await token.balanceOf(buyer.address)) < BigInt(t.budget))
-    throw Error("Buyer needs 4.50 test tUSD8.");
+  if ((await token.balanceOf(buyer.address)) < t.budget)
+    throw Error("Buyer needs " + exactToken(t.budget) + " test tUSD8.");
   if ((await token.allowance(buyer.address, c.target)) !== BigInt(t.budget))
     await (await token.connect(buyer).approve(c.target, t.budget)).wait();
   const tx = await c.open(salt, t);

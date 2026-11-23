@@ -66,6 +66,17 @@ test(
       env.ROUTE_ID = routeId(buyer, env.ROUTE_SALT);
       await call("route", "open");
       assert.ok(JSON.parse(await call("route", "open")).alreadyOpened);
+      // Resume on a different operator machine using only the exported public route file.
+      const handoff = {
+        chainId: 44005,
+        DOCK_ADDRESS: deployed.contract,
+        ROUTE_ID: env.ROUTE_ID,
+        CARRIER_ADDRESS: carrier,
+        STATION_ADDRESS: station,
+        AGENT_ADDRESS: agent,
+      };
+      env.ROUTE_CONFIG_FILE = path.join(tmp, "route-config.json");
+      await fs.writeFile(env.ROUTE_CONFIG_FILE, JSON.stringify(handoff));
       const measurement = {
         lot: randomId(),
         crates: 6,
@@ -74,6 +85,8 @@ test(
         observedAt: "now",
       };
       await fs.writeFile(path.join(tmp, "m.json"), JSON.stringify(measurement));
+      const rid = env.ROUTE_ID;
+      delete env.ROUTE_ID;
       await call("ticket", "m.json", "signed.json");
       await call("agent", "signed.json");
       const base = path.join(
@@ -81,7 +94,7 @@ test(
         ".dockcheck",
         "44005",
         env.DOCK_ADDRESS,
-        env.ROUTE_ID,
+        rid,
         measurement.lot,
       );
       const proofFile = base + ".proof.json";

@@ -1,4 +1,4 @@
-# Running the public-testnet demo
+# Operating DockCheck on Aevum
 
 | Parameter | Value |
 | --- | --- |
@@ -22,12 +22,12 @@ The repository includes the mined [Aevum pilot](../evidence/aevum-pilot.json). F
 
 The deployment desk prefills the mined pilot contract address. Choose **Use existing contract** to check its runtime and open a new route there.
 
-1. Start the prebuilt desk. Open the **Local rehearsal** network menu. **Check live network** reads chain ID, token decimals, runtime hash and the latest block without connecting a wallet.
-2. Choose **Connect to Aevum** and approve the wallet's network switch. Confirm chain 44005. **Deploy new contract** deploys DockCheck with the official token address. Keep the deployment hash from your wallet. Alternatively enter an existing address. The client requires a complete runtime-bytecode match and the official token.
-3. Enter a test carrier address you control for the presentation. The browser generates distinct, temporary station and agent signing keys for this demo. Choose **Review route funding** and verify the payee, budget, expiry and spender. Choose the 0.10 tUSD8 pilot and approve the exact allowance and separate deposit. The full rehearsal terms are also available. Declining the deposit leaves the allowance available until used or cleared. The funding review provides a **Clear allowance** action.
-4. Open **Route policy** and copy the route ID and contract. The valid receipt and rejection steps match the local walkthrough. The buyer wallet relays the settlement in this browser demonstration and pays test gas.
-5. **Export evidence** after the first settlement. Open the linked explorer transaction and verify the tUSD8 Transfer recipient and amount. **Sync recent blocks** reconstructs externally submitted settlements for this route within the latest 1,000 blocks. For older transfers run the by-hash command below.
-6. Revoke the route before the presentation ends and retain the refund hash. A reload discards the two temporary signing keys. The buyer can still use **Use existing** and **Resume existing route** to read balances and reclaim escrow. New settlements on that browser-demo route require its original signatures. Open a new route for a fresh rehearsal.
+1. Open the release. Verify a settlement by hash without a wallet, or select **Open buyer workspace → Connect to Aevum** for a funded route. The wallet must select chain 44005.
+2. Select **Use existing contract** to reuse the public deployment. The browser checks its bytecode and token. A separate deployment is optional.
+3. Enter the carrier payout address, independent station address and agent address. Set budget, price per crate, per-ticket cap, temperature band and validity. Review all fields, then approve the exact allowance and the deposit. If funding is interrupted after approval, the funding review also allows clearing the allowance.
+4. Select **Export route configuration**. Give this public JSON to the station and agent and set `ROUTE_CONFIG_FILE` to its path on each machine. Provide the private signing material only in the appropriate local environment. The loader accepts the contract, route and role identifiers. The RPC and signing keys come from each operator’s environment. Conflicting settings cause an error.
+5. Create a signed station ticket and relay it using the commands below. Use **Sync recent blocks** to import the payment, or verify an older receipt by hash.
+6. Reconnect and resume the same route after a browser restart. The assigned signers remain usable on their own machines. The buyer can close the route to refund its remaining balance. Older routes still require the originally assigned signers. Legacy in-tab keys that were lost cannot be recovered; the buyer can close that route.
 
 ## One-command public pilot
 
@@ -63,6 +63,8 @@ Install dependencies with `npm ci`. Copy `.env.example` to `.env` locally. Use s
 | AEVUM_RPC_URL | All live commands | Optional HTTPS JSON-RPC override for the same chain |
 | DOCK_ADDRESS | Commands after deployment | DockCheck release with an exact runtime match |
 | ROUTE_ID | Status, close, station, agent | 32-byte ID printed when the buyer opens the route |
+| ROUTE_CONFIG_FILE | Station, agent, buyer | Optional exported JSON with the route ID, contract and public roles |
+| ROUTE_POLICY_FILE | Buyer CLI open | Optional path to budget and price in tUSD8, cap, temperatures in °C and validity in hours. See examples/route-policy.json. Without this option, the CLI uses the historical 4.50 tUSD8 policy. |
 | ROUTE_SALT | Open | Persistent random 32-byte value for idempotent route creation |
 | CARRIER_ADDRESS | Open | Fixed freight recipient |
 | STATION_ADDRESS / AGENT_ADDRESS | Open | Distinct signing addresses, both distinct from the carrier |

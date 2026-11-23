@@ -1189,3 +1189,47 @@ dialog {
     break-inside: avoid;
   }
 }
+[hidden] {
+  display: none !important;
+}
+.manifest:has(+ [hidden]) {
+  border-radius: 16px;
+}
+.payment-search {
+  margin-top: 18px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 22px;
+  align-items: center;
+}
+.payment-search p:not(.over),
+#operator-handoff p:not(.over) {
+  color: var(--muted);
+  margin: 6px 0;
+}
+.lookup-controls {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  margin-top: 5px;
+}
+.lookup-controls input {
+  min-width: 0;
+  margin: 0;
+}
+.lookup-controls button {
+  flex-shrink: 0;
+}
+.policy-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 12px;
+}
+#operator-handoff {
+  margin-top: 18px;
+}
+@media (max-width: 720px) {
+  .payment-search {
+    grid-template-columns: 1fr;
+  }
+}

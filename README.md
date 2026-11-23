@@ -4,26 +4,36 @@
 
 The example route runs from Kutaisi to Tbilisi. The example crate prices and temperature band are fictional contract terms. Each buyer sets terms for its own cargo.
 
-**Try the mined receipt first.** Open **View pilot receipt**, choose **Check carrier invoice**, then **Compare invoice**. The editable example bills eight crates at 0.08 tUSD8. The signed receipt records six crates and a 0.06 payment. DockCheck flags the two-crate, 0.02 tUSD8 difference. Correct the line to six crates and 0.06 and it matches. Print the report for the carrier or export JSON for accounts payable. Invoice details stay in the browser. The example shipment and invoice are fictional. The testnet payment is mined.
+## Run the release
 
-Use **Run local walkthrough**, then **Inspect route audit**, to verify a separate local escrow lifecycle. **Verify payment** checks one Aevum transaction. **Audit a route** reconstructs the funding, payout and refund from three hashes without connecting a wallet.
+Download **DockCheck-1.1.0.zip** from the [GitHub release](https://github.com/novruzovimose-cmd/dockcheck-aevum/releases/tag/v1.1.0) and extract the whole archive. Choose the named release asset for the prebuilt application.
 
-## Start here
-
-| What you want to do | Where to start |
+| Platform | Start |
 | --- | --- |
-| Try the full local flow on Windows | Install Node.js 22.12 or newer, extract the ZIP, double-click **START-WINDOWS.cmd**. |
-| Try it on macOS or Linux | From the extracted directory run **node scripts/serve.mjs** and open **http://127.0.0.1:4173**. |
-| Run without Node | Load the packaged Linux/amd64 image using the commands below. |
-| Watch a short demo | Open **delivery/DockCheck-demo.mp4**. It plays back a recorded local Solidity execution. |
-| Run on QDay Aevum | Open **docs/AEVUM.md**. The browser supports deployment with a wallet. The CLI supports separated station, agent and relayer processes. |
-| Present or submit | **docs/PITCH.md** includes the live demo script, submission copy, business assumptions and the mined evidence links. |
+| Windows x64 | Double-click **START-WINDOWS.cmd**. The bundled server opens your default browser. Keep the console open while working. |
+| Linux x64 | From the extracted DockCheck directory run `chmod +x delivery/dockcheck-linux-amd64 && ./delivery/dockcheck-linux-amd64 -listen 127.0.0.1:4173 -root dist`. |
+| macOS or another OS with Node 22.12+ | Run `node scripts/serve.mjs` from the extracted project. |
+| Docker | Follow the image instructions below. |
 
-From a GitHub source checkout, run `npm ci && npm run build` before launching the desk. The prebuilt ZIP has no package-install step, bundled fonts and an in-browser EVM. The LOCAL units in the rehearsal exist only in that tab. Reloading starts a new rehearsal. The public-testnet mode uses the official token on chain 44005.
+Open **http://127.0.0.1:4173** for the native and Node launchers. The application opens in the Aevum receipt workspace. Paste a settlement hash to verify a carrier payment and check an invoice line without connecting a wallet. **View mined receipt** opens the included public example even offline. Example site names, deliveries and invoice fields are fictional. Live route creation, payment and fresh verification use the public testnet.
 
-### First delivery
+### Operate a route
 
-1. Leave **In range** selected. The buyer has 4.50 LOCAL in escrow. The dock has accepted six crates between 2.4 °C and 6.7 °C.
+Open **Open buyer workspace → Connect to Aevum → Use existing contract**. Set the carrier, station and agent public addresses, budget, unit price, crate cap, temperature band and expiry. Review the terms before funding. Use **Export route configuration** to hand the public identifiers to the station and agent, who sign from their own machines. To resume after a restart, reconnect and select **Resume existing route**. Use the [operator guide](docs/AEVUM.md) for signing, relaying, evidence recovery and refunds.
+
+### Develop and package
+
+From a clean Git checkout, run `npm ci` and `npm run dev`. The development server builds Solidity and the browser bundle, watches source changes and serves localhost. Refresh the browser after an edit. Use `npm test` for the regression suite. Use `npm run build && npm start` for a single build.
+
+To assemble a versioned distribution on Linux, install Python 3.10+ and a Go compiler (the release pipeline uses Go 1.25.x), then run `npm run package`. Package assembly reads Git-tracked source, compiled assets and cross-compiled Windows/Linux x64 launchers. Its output includes the Docker image, demo film, source, notices, evidence and a checksum manifest. Run `python3 scripts/check_release.py release/DockCheck-1.1.0.zip`. Each package also has an external SHA-256 file. See [release notes](docs/RELEASE.md).
+
+### Judge walkthrough
+
+Open **View mined receipt → Check carrier invoice → Compare invoice**. Eight crates billed against six accepted flags a 0.02 tUSD8 discrepancy. Correct the quantities and total to see a match. **Recheck on Aevum** reads the three transaction receipts. The short local execution film is in `delivery/DockCheck-demo.mp4`. See [presentation notes](docs/PITCH.md).
+
+### First delivery in the developer rehearsal
+
+1. Open the network menu and choose **Start local rehearsal**. Leave **In range** selected. The buyer has 4.50 LOCAL in escrow. The dock has accepted six crates between 2.4 °C and 6.7 °C.
 2. Choose **Review delivery**. Inspect the recipient, chain, lot commitment and quoted 0.75. Choose **Confirm settlement**. Escrow falls to 3.75 and the carrier has received 0.75.
 3. Choose **Warm load**, then **Review delivery**. A 10.3 °C maximum breaks the agreed 8 °C ceiling. The contract simulation rejects it and no transfer is broadcast. **Replay last** reuses the previously settled signed receipt. The one-payment-per-lot rule rejects it.
 4. Open **Route policy**, then **Review revocation**. Confirm the refund of the remaining 3.75. **Export evidence** downloads transaction and signature data. Holds are labeled as off-chain preflight decisions.
@@ -34,10 +44,10 @@ The downloadable project ZIP includes a loadable image without any npm or blockc
 
 ```sh
 docker load -i delivery/dockcheck-linux-amd64.tar
-docker run --rm -p 127.0.0.1:8080:8080 dockcheck:1.0
+docker run --rm -p 127.0.0.1:8080:8080 dockcheck:1.1.0
 ```
 
-Open http://127.0.0.1:8080. On a different architecture, run `docker build -t dockcheck:1.0 .` with the included Dockerfile. The Go server runs as UID 65532. HTTPS or localhost is required for browser cryptography. No wallet is needed for the local flow.
+Open http://127.0.0.1:8080. On a different architecture, run `docker build -t dockcheck:1.1.0 .` with the included Dockerfile. The Go server runs as UID 65532. HTTPS or localhost is required for browser cryptography. No wallet is needed for the local flow.
 
 ## Rebuild, test and reproduce the evidence
 
@@ -51,7 +61,7 @@ npm run demo
 npm start
 ```
 
-The included test report records 34 passing tests. One integration test uses a loopback-only Aevum-shaped fixture to exercise the full CLI, including a relayer restart. Tests compile the contracts with solc-js and execute the bytecode in Ganache. Coverage includes authorization, exact transfer amounts, conservation of the route budget, sender-independent relaying, freshness, expiry, revocation, duplicate lots, altered signatures, modified evidence, and reconstructing a lost receipt from calldata. The demo writes the fresh full transcript and signatures to `runtime-output/local-run.json`. Each run uses new local addresses and hashes. This is a functional test suite, not a security audit.
+The included test report records 36 passing tests. One integration test uses a loopback-only Aevum-shaped fixture to exercise the full CLI, including a relayer restart. Tests compile the contracts with solc-js and execute the bytecode in Ganache. Coverage includes authorization, exact transfer amounts, conservation of the route budget, sender-independent relaying, freshness, expiry, revocation, duplicate lots, altered signatures, modified evidence, and reconstructing a lost receipt from calldata. The demo writes the fresh full transcript and signatures to `runtime-output/local-run.json`. Each run uses new local addresses and hashes. This is a functional test suite, not a security audit.
 
 ## Architecture
 

@@ -1,6 +1,6 @@
 {
   "name": "dockcheck-aevum",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "private": true,
   "description": "Cold-chain delivery receipts that release capped tUSD8 freight payments.",
   "license": "MIT",
@@ -12,6 +12,8 @@
     "compile": "node scripts/compile.mjs",
     "build": "npm run compile && node scripts/build.mjs",
     "test": "npm run compile && node --test tests/*.test.mjs",
+    "package": "npm run build && python3 scripts/package_release.py",
+    "dev": "node scripts/dev.mjs",
     "start": "node scripts/serve.mjs",
     "agent": "node scripts/agent.mjs",
     "proof": "node scripts/proof.mjs",

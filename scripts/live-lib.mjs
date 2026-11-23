@@ -8,6 +8,30 @@ import {
 } from "ethers";
 import { assertDesk, asJSON, net, tokenABI } from "../src/protocol.mjs";
 if (fs.existsSync(".env")) process.loadEnvFile(".env");
+if (process.env.ROUTE_CONFIG_FILE) {
+  const config = JSON.parse(
+    fs.readFileSync(process.env.ROUTE_CONFIG_FILE, "utf8"),
+  );
+  if (config.chainId !== net.id || !/^0x[0-9a-f]{64}$/i.test(config.ROUTE_ID))
+    throw Error("Route configuration must identify a valid Aevum route.");
+  for (const name of [
+    "DOCK_ADDRESS",
+    "ROUTE_ID",
+    "CARRIER_ADDRESS",
+    "STATION_ADDRESS",
+    "AGENT_ADDRESS",
+  ]) {
+    const value = name === "ROUTE_ID" ? config[name] : getAddress(config[name]);
+    if (
+      process.env[name] &&
+      process.env[name].toLowerCase() !== value.toLowerCase()
+    )
+      throw Error(
+        name + " differs between the environment and the route configuration.",
+      );
+    process.env[name] = value;
+  }
+}
 export function need(name) {
   const val = process.env[name];
   if (!val) throw Error("Set " + name + " in your local environment.");

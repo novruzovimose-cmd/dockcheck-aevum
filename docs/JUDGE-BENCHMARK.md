@@ -19,7 +19,7 @@ These are ten hypothetical entries a judge could compare against DockCheck. They
 
 A buyer escrows freight money. A receiving station and scoped agent sign the same cold-chain ticket. The carrier is paid once for the accepted crates. The buyer closes the route and reclaims the balance. The judge independently reconciles the whole flow using **three transaction hashes**. Bad deliveries and repeated lots do not generate another transfer.
 
-Run **Run local walkthrough**, then **Inspect route audit** to see that result immediately. For public Aevum evidence, open **View pilot receipt** and choose **Recheck on Aevum**. The three hashes are prefilled. Its audit intentionally covers one payout, so incomplete evidence for a multi-payout route is rejected. The CLI can re-verify the packet from any local checkout.
+Run **Run local walkthrough**, then **Inspect route audit** to see that result immediately. For public Aevum evidence, open **View mined receipt** and choose **Recheck on Aevum**. The three hashes are prefilled. Its audit intentionally covers one payout, so incomplete evidence for a multi-payout route is rejected. The CLI can re-verify the packet from any local checkout.
 
 ## What could still outrank this
 

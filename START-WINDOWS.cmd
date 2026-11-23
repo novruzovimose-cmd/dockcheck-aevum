@@ -1,14 +1,17 @@
 @echo off
 setlocal
 cd /d "%~dp0"
-where node >nul 2>nul
-if errorlevel 1 (
-  echo Install Node.js 22 LTS or newer, then reopen this file.
+if not exist "dist\index.html" (
+  echo Use the prebuilt release ZIP, or run npm ci and npm run build from this source checkout.
   pause
   exit /b 1
 )
-set "HOST=127.0.0.1"
-set "PORT=4173"
-echo Open http://127.0.0.1:4173/ in your browser once the server starts.
-node scripts\serve.mjs
+if exist "delivery\dockcheck-windows-amd64.exe" (
+  echo DockCheck will open at http://127.0.0.1:4173/ . Close this window to stop it.
+  "delivery\dockcheck-windows-amd64.exe" -listen 127.0.0.1:4173 -root "dist" -open
+) else (
+  set "HOST=127.0.0.1"
+  set "PORT=4173"
+  node scripts\serve.mjs
+)
 if errorlevel 1 pause

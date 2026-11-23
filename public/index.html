@@ -29,7 +29,7 @@
         </nav>
         <button class="network" id="network">
           <span class="light"></span
-          ><span id="network-text">Local rehearsal</span
+          ><span id="network-text">Aevum workspace</span
           ><span class="caret"></span>
         </button>
       </div>
@@ -40,17 +40,20 @@
           <p class="over">Cold-chain freight</p>
           <h1>Receiving desk</h1>
         </div>
-        <button class="outline" id="policy">View route policy</button>
+        <button class="outline" id="policy">Open buyer workspace</button>
       </div>
       <section class="manifest" aria-label="Route manifest">
         <div class="cover">
           <div class="manifest-meta">
-            <span class="slim">Freight manifest</span
-            ><span class="route-code">GE / 014</span>
+            <span class="slim" id="manifest-type">Settlement network</span
+            ><span class="route-code" id="manifest-id">Chain 44005</span>
           </div>
-          <h2>Kutaisi <span class="route-to">to</span> Tbilisi</h2>
-          <p>Refrigerated produce · Carrier settlement</p>
-          <div class="hero-status" id="route-status">Preparing desk</div>
+          <h2 id="manifest-title">Aevum receiving desk</h2>
+          <p id="manifest-detail">
+            Verify a carrier payment or connect a buyer wallet to manage a
+            route.
+          </p>
+          <div class="hero-status" id="route-status">Read-only workspace</div>
         </div>
         <div class="art">
           <img
@@ -61,7 +64,12 @@
           />
         </div>
       </section>
-      <div class="balances" aria-label="Route balances">
+      <div
+        id="route-balances"
+        hidden
+        class="balances"
+        aria-label="Route balances"
+      >
         <div>
           <span>Available escrow</span><strong id="available">—</strong
           ><small id="esc-unit">test units</small>
@@ -79,6 +87,30 @@
           ><small>°C</small>
         </div>
       </div>
+      <section class="card payment-search" aria-labelledby="search-title">
+        <div>
+          <p class="over">Receipt lookup</p>
+          <h2 id="search-title">Verify a carrier payment</h2>
+          <p>
+            Enter an Aevum settlement hash to check the signatures, payment and
+            invoice.
+          </p>
+        </div>
+        <form id="lookup">
+          <label for="lookup-hash">Settlement transaction hash</label>
+          <div class="lookup-controls">
+            <input
+              id="lookup-hash"
+              placeholder="0x…"
+              autocapitalize="none"
+              spellcheck="false"
+              pattern="0x[a-fA-F0-9]{64}"
+              required
+            />
+            <button class="primary">Verify receipt</button>
+          </div>
+        </form>
+      </section>
       <section class="case-strip" aria-labelledby="case-title">
         <div>
           <p class="over">Aevum testnet receipt</p>
@@ -88,11 +120,11 @@
           </p>
         </div>
         <div class="case-actions">
-          <button class="primary" id="pilot">View pilot receipt</button
+          <button class="primary" id="pilot">View mined receipt</button
           ><button class="quiet" id="rehearse">Run local walkthrough</button>
         </div>
       </section>
-      <div class="columns">
+      <div id="station-tools" hidden class="columns">
         <section class="card ticket">
           <div class="section-head">
             <div>
@@ -184,10 +216,24 @@
             </li>
           </ul>
           <div class="notice" role="status" id="notice">
-            Starting an isolated EVM in this browser…
+            Ready for route activity.
           </div>
         </section>
       </div>
+      <section
+        class="card"
+        id="operator-handoff"
+        hidden
+        aria-labelledby="handoff-title"
+      >
+        <p class="over">Station and agent</p>
+        <h2 id="handoff-title">Operate this route</h2>
+        <p>
+          The assigned station signs the delivery ticket. The assigned agent
+          verifies it and relays the payment.
+        </p>
+        <button class="outline" id="handoff">Export route configuration</button>
+      </section>
       <section
         class="invoice-desk"
         id="invoices"
@@ -209,7 +255,7 @@
             <span>Output</span><b>Invoice variance report</b>
           </div>
           <button id="invoice-pilot" class="primary full">
-            Check the pilot invoice
+            Check the example invoice
           </button>
         </div>
       </section>
@@ -231,7 +277,7 @@
         <div id="history" role="list"></div>
       </section>
       <footer>
-        <span>DockCheck / Freight settlement</span
+        <span>DockCheck 1.1.0 / Freight settlement</span
         ><button id="source">Contract source</button
         ><a
           href="https://qday.io/builder-challenge"

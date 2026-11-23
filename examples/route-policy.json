@@ -1,0 +1,8 @@
+{
+  "budget": "0.10",
+  "unitPrice": "0.01",
+  "maxCrates": 10,
+  "lowC": "2.0",
+  "highC": "8.0",
+  "hours": 24
+}

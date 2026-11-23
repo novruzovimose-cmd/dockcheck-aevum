@@ -8,7 +8,7 @@ A carrier invoices for eight crates. The receiving dock signed for six. Which tw
 
 | Time | What to show | What to say |
 | --- | --- | --- |
-| 0:00–0:30 | View pilot receipt | A buyer on Aevum escrowed 0.10 tUSD8. The station accepted six crates at 0.01 each. Point to the mined carrier transfer and buyer refund. |
+| 0:00–0:30 | View mined receipt | A buyer on Aevum escrowed 0.10 tUSD8. The station accepted six crates at 0.01 each. Point to the mined carrier transfer and buyer refund. |
 | 0:30–1:10 | Check carrier invoice → Compare invoice | An example carrier bill says eight crates and 0.08. Show the two-crate discrepancy, the exact 0.02 difference, and the printable report with its transaction hash. Correct the bill to six and 0.06 to show a match. |
 | 1:10–2:00 | Reopen the pilot receipt → Recheck on Aevum | Verify the three prefilled hashes on the public chain. Show the fixed carrier, deposit, payout and refund. The entrant can also reproduce the evidence from the CLI. |
 | 2:00–3:05 | Run local walkthrough | Label this chain as local. Follow the signed receipt through settlement, a warm load, a repeated lot and revocation. Show the two preflight holds and the unspent escrow returning. |

@@ -1,10 +1,10 @@
 import pilot from "../evidence/aevum-pilot.json" with { type: "json" };
+import { routeTerms } from "./route-terms.mjs";
 import { compareInvoice } from "./invoice.mjs";
 import {
   BrowserProvider,
   JsonRpcProvider,
   Contract,
-  Wallet,
   ZeroAddress,
   getAddress,
   formatEther,
@@ -18,7 +18,6 @@ import {
   deployDesk,
   localSession,
   head,
-  demoTerms,
   pilotBudget,
   randomId,
   routeId,
@@ -106,7 +105,10 @@ function uiLock(value) {
     "audit-route",
   ]) {
     $(id).disabled =
-      value || (!session && id === "review") || (id === "repeat" && !last);
+      value ||
+      (id === "review" &&
+        (!session?.station || !session?.agent || state?.closed)) ||
+      (id === "repeat" && !last);
   }
   for (const b of modal.querySelectorAll("button:not(.close)"))
     b.disabled = value;
@@ -254,6 +256,21 @@ function drawHistory() {
 async function refresh() {
   state = await session.contract.routeOf(session.route);
   const t = state.terms;
+  const local = session.chainId === 31337;
+  $("route-balances").hidden = false;
+  $("station-tools").hidden = !local;
+  $("operator-handoff").hidden = local;
+  $("manifest-type").textContent = local
+    ? "Training manifest"
+    : "Active workspace";
+  $("manifest-id").textContent = local ? "GE / 014" : short(session.route);
+  $("manifest-title").textContent = local
+    ? "Kutaisi to Tbilisi"
+    : "Carrier settlement route";
+  $("manifest-detail").textContent = local
+    ? "Refrigerated produce · Local rehearsal"
+    : "Carrier " + short(t.carrier) + " · Aevum testnet";
+  $("policy").textContent = "View route policy";
   $("available").textContent = money(state.remaining);
   $("paid").textContent = money(state.released);
   $("rate").textContent = money(t.unitPrice);
@@ -321,7 +338,7 @@ async function bootLocal() {
 }
 function policy() {
   if (!state) {
-    notice("The desk is initializing.");
+    networkMenu();
     return;
   }
   const t = state.terms;
@@ -413,7 +430,7 @@ $("ticket-form").onsubmit = (e) => {
   action(async () => {
     if (!session.station || !session.agent)
       throw Error(
-        "This route uses external signers. Submit the signed ticket with the CLI agent, or open a new demo route from Network.",
+        "Submit this station’s signed ticket with the configured CLI agent.",
       );
     const t = {
       lot: fixtureLot(session.route, lotIndex),
@@ -539,7 +556,7 @@ $("guide").onclick = () =>
   openModal(
     "Operator handbook",
     "Field guide",
-    '<ol class="guide-list"><li><b>Receive a delivery.</b> Choose In range. Review the signed crate count, temperature and fixed payee. Confirm the transfer.</li><li><b>Check a warm load.</b> A high reading of 10.3 °C exceeds the 8 °C ceiling. The agent holds the ticket before broadcasting.</li><li><b>Replay last.</b> Reuse the exact paid receipt. The contract rejects a second payment for that lot.</li><li><b>Revoke.</b> Open Route policy to close the budget and return unspent funds.</li></ol><p>The initial desk runs Solidity on a fresh, in-browser EVM. Reloading clears local activity. Use the network menu for the official testnet.</p>',
+    '<ol class="guide-list"><li><b>Receive a delivery.</b> Choose In range. Review the signed crate count, temperature and fixed payee. Confirm the transfer.</li><li><b>Check a warm load.</b> A high reading of 10.3 °C exceeds the 8 °C ceiling. The agent holds the ticket before broadcasting.</li><li><b>Replay last.</b> Reuse the exact paid receipt. The contract rejects a second payment for that lot.</li><li><b>Revoke.</b> Open Route policy to close the budget and return unspent funds.</li></ol><p>Use Receipt lookup to verify a public settlement without a wallet. Open the buyer workspace to fund or resume an Aevum route. The network menu also offers an isolated local rehearsal.</p>',
   );
 $("source").onclick = () =>
   openModal(
@@ -587,13 +604,12 @@ function networkMenu() {
   openModal(
     "Network",
     "Choose a workspace",
-    "<p><b>Local rehearsal</b><br>Runs the compiled contracts in this browser with temporary test balances. A new rehearsal clears its history.</p>" +
-      button("local", "Start fresh rehearsal", "secondary") +
-      "<hr><p><b>QDay Aevum testnet</b><br>Chain 44005 · tUSD8 (6 decimals). Use an EVM wallet with test gas. The buyer reviews every wallet transaction.</p>" +
+    "<p><b>QDay Aevum testnet</b><br>Chain 44005 · tUSD8 (6 decimals). Use an EVM wallet with test gas. The buyer reviews every wallet transaction.</p>" +
       button("connect", "Connect to Aevum") +
       " " +
       button("network-read", "Check live network", "secondary") +
-      ' <a href="https://faucet.qday.info/" target="_blank" rel="noreferrer">Testnet faucet</a>',
+      ' <a href="https://faucet.qday.info/" target="_blank" rel="noreferrer">Testnet faucet</a><hr><p><b>Developer rehearsal</b><br>Use temporary balances and in-browser signers on an isolated local chain.</p>' +
+      button("local", "Start local rehearsal", "secondary"),
   );
   bind("local", async () => {
     await bootLocal();
@@ -700,89 +716,140 @@ function routeSetup() {
     "Fund or resume a route",
     '<p class="address">Contract ' +
       esc(c.contract.target) +
-      '</p><label>Carrier payout address<input id="carrier" placeholder="0x…"></label><p>The demo uses two temporary in-tab signers for the station and agent. They expire on reload. The buyer can still resume and refund. For independent operators, use the CLI with separate keys.</p>' +
-      '<label>Route size<select id="route-size"><option value="pilot">Faucet-sized pilot · 0.10 tUSD8 · 0.01 per crate</option><option value="standard">Full rehearsal terms · 4.50 tUSD8 · 0.125 per crate</option></select></label><p>Both routes use a 2–8 °C receiving policy and expire in 24 hours.</p>' +
+      '</p><form id="fund-form"><label>Carrier payout address<input id="carrier" required placeholder="0x…"></label>' +
+      '<label>Receiving station address<input id="station-address" required placeholder="0x…"></label>' +
+      '<label>Settlement agent address<input id="agent-address" required placeholder="0x…"></label>' +
+      "<p>Use the public addresses of the people or services that will sign tickets and releases. Their keys stay with them.</p>" +
+      '<div class="policy-fields">' +
+      [
+        ["budget", "Budget (tUSD8)", "0.10"],
+        ["unitPrice", "Price per crate (tUSD8)", "0.01"],
+        ["maxCrates", "Crate cap per ticket", "10"],
+        ["hours", "Valid for (hours)", "24"],
+        ["lowC", "Minimum °C", "2.0"],
+        ["highC", "Maximum °C", "8.0"],
+      ]
+        .map(
+          ([id, label, value]) =>
+            "<label>" +
+            label +
+            '<input id="term-' +
+            id +
+            '" required value="' +
+            value +
+            '"></label>',
+        )
+        .join("") +
+      "</div>" +
       button("fund", "Review route funding") +
-      '<hr><label>Existing route ID<input id="resume-id" placeholder="0x… (32 bytes)" value="' +
+      '</form><hr><label>Existing route ID<input id="resume-id" placeholder="0x… (32 bytes)" value="' +
       esc(same ? m.route || "" : "") +
       '"></label>' +
       button("resume", "Resume existing route", "secondary"),
   );
-  bind("fund", async () => {
-    const carrier = getAddress($("carrier").value.trim());
-    if (carrier === ZeroAddress || carrier === c.contract.target)
-      throw Error("Enter the carrier’s receiving address.");
-    const station = Wallet.createRandom(),
-      agent = Wallet.createRandom(),
-      terms = demoTerms(
-        carrier,
-        station.address,
-        agent.address,
-        await head(c.provider),
-        $("route-size").value === "pilot",
+  $("fund-form").onsubmit = (event) => {
+    event.preventDefault();
+    action(async () => {
+      const fields = Object.fromEntries(
+        ["budget", "unitPrice", "maxCrates", "hours", "lowC", "highC"].map(
+          (id) => [id, $("term-" + id).value.trim()],
+        ),
       );
-    const budget = BigInt(terms.budget);
-    if ((await c.token.balanceOf(c.account)) < budget)
-      throw Error(
-        "The buyer needs " + exactToken(budget) + " test tUSD8 for this route.",
-      );
-    openModal(
-      "Wallet review",
-      "Fund carrier escrow",
-      facts([
-        ["Buyer", c.account],
-        ["Carrier", carrier],
-        ["Spender contract", c.contract.target],
-        ["Maximum transfer", exactToken(budget) + " tUSD8"],
-        ["Expires", new Date(terms.expiry * 1000).toISOString()],
-      ]) +
-        '<p>Your wallet will request an exact token allowance if needed and then a separate escrow deposit. If you decline the deposit, you can clear the leftover allowance below.</p><div class="modal-actions">' +
-        button("cancel-allow", "Clear allowance", "secondary") +
-        button("open-route", "Approve and fund") +
-        "</div>",
-    );
-    bind("cancel-allow", async () => {
-      await (await c.token.approve(c.contract.target, 0)).wait();
-      routeSetup();
-    });
-    bind("open-route", async () => {
-      const allowance = await c.token.allowance(c.account, c.contract.target);
-      if (allowance !== budget)
-        await (await c.token.approve(c.contract.target, budget)).wait();
-      const salt = randomId();
-      const rid = routeId(c.account, salt);
-      const tx = await c.contract.open(salt, terms);
-      saveMeta({
-        contract: c.contract.target,
-        route: rid,
-        openHash: tx.hash,
-        history: [],
-      });
-      const rec = await tx.wait();
-      const route = parseEvent(rec, c.contract, "Opened").route;
-      await activate(
+      const terms = routeTerms(
         {
-          ...c,
-          route,
-          station,
-          agent,
-          carrier,
-          openHash: tx.hash,
-          openBlock: rec.blockNumber,
+          ...fields,
+          carrier: $("carrier").value.trim(),
+          station: $("station-address").value.trim(),
+          agent: $("agent-address").value.trim(),
         },
-        [],
+        await head(c.provider),
+        c.contract.target,
       );
-      record({
-        kind: "",
-        tag: "Funded",
-        title: "Route opened on Aevum",
-        detail: "Exact tUSD8 deposit confirmed.",
-        hash: tx.hash,
-        amount: exactToken(budget) + " tUSD8",
+      const carrier = terms.carrier;
+      const budget = BigInt(terms.budget);
+      if ((await c.token.balanceOf(c.account)) < budget)
+        throw Error(
+          "The buyer needs " +
+            exactToken(budget) +
+            " test tUSD8 for this route.",
+        );
+      openModal(
+        "Wallet review",
+        "Fund carrier escrow",
+        facts([
+          ["Buyer", c.account],
+          ["Carrier", carrier],
+          ["Spender contract", c.contract.target],
+          ["Receiving station", terms.station],
+          ["Settlement agent", terms.agent],
+          ["Rate per crate", exactToken(terms.unitPrice) + " tUSD8"],
+          ["Crate cap", terms.maxCrates],
+          [
+            "Temperature band",
+            terms.floor / 10 + "–" + terms.ceiling / 10 + " °C",
+          ],
+          ["Maximum transfer", exactToken(budget) + " tUSD8"],
+          ["Expires", new Date(terms.expiry * 1000).toISOString()],
+        ]) +
+          '<p>Your wallet will request an exact token allowance if needed and then a separate escrow deposit. If you decline the deposit, you can clear the leftover allowance below.</p><div class="modal-actions">' +
+          button("cancel-allow", "Clear allowance", "secondary") +
+          button("open-route", "Approve and fund") +
+          "</div>",
+      );
+      bind("cancel-allow", async () => {
+        await (await c.token.approve(c.contract.target, 0)).wait();
+        routeSetup();
       });
-      modal.close();
+      const salt = randomId(),
+        rid = routeId(c.account, salt);
+      bind("open-route", async () => {
+        const prior = await c.contract.routeOf(rid);
+        if (prior.owner !== ZeroAddress) {
+          await activate({ ...c, route: rid, carrier }, []);
+          modal.close();
+          return;
+        }
+        const allowance = await c.token.allowance(c.account, c.contract.target);
+        if (allowance !== budget)
+          await (await c.token.approve(c.contract.target, budget)).wait();
+        saveMeta({
+          contract: c.contract.target,
+          route: rid,
+          history: [],
+          pendingHash: null,
+          openHash: null,
+        });
+        const tx = await c.contract.open(salt, terms);
+        saveMeta({
+          contract: c.contract.target,
+          route: rid,
+          openHash: tx.hash,
+          history: [],
+        });
+        const rec = await tx.wait();
+        const route = parseEvent(rec, c.contract, "Opened").route;
+        await activate(
+          {
+            ...c,
+            route,
+            carrier,
+            openHash: tx.hash,
+            openBlock: rec.blockNumber,
+          },
+          [],
+        );
+        record({
+          kind: "",
+          tag: "Funded",
+          title: "Route opened on Aevum",
+          detail: "Exact tUSD8 deposit confirmed.",
+          hash: tx.hash,
+          amount: exactToken(budget) + " tUSD8",
+        });
+        modal.close();
+      });
     });
-  });
+  };
   bind("resume", async () => {
     const rid = $("resume-id").value.trim();
     if (!/^0x[\da-f]{64}$/i.test(rid)) throw Error("Enter a 32-byte route ID.");
@@ -918,6 +985,9 @@ function showVerified({ proof, terms }, live) {
 }
 
 async function verifyOnAevum(hash) {
+  if ($("dialog-note"))
+    $("dialog-note").textContent =
+      "Reading the transaction and checking both signatures on Aevum…";
   const provider = new JsonRpcProvider(net.rpc, undefined, {
     batchMaxCount: 1,
     cacheTimeout: -1,
@@ -1261,9 +1331,32 @@ function downloadJSON(name, data) {
   a.click();
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 }
+$("handoff").onclick = () => {
+  if (!session || session.chainId !== 44005 || !state) return;
+  downloadJSON("dockcheck-route-config.json", {
+    chainId: 44005,
+    AEVUM_RPC_URL: net.rpc,
+    DOCK_ADDRESS: session.contract.target,
+    ROUTE_ID: session.route,
+    CARRIER_ADDRESS: state.terms.carrier,
+    STATION_ADDRESS: state.terms.station,
+    AGENT_ADDRESS: state.terms.agent,
+    unitPriceBaseUnits: String(state.terms.unitPrice),
+    budgetBaseUnits: String(state.terms.budget),
+    maxCrates: Number(state.terms.maxCrates),
+    lowC: Number(state.terms.floor) / 10,
+    highC: Number(state.terms.ceiling) / 10,
+    expires: new Date(Number(state.terms.expiry) * 1000).toISOString(),
+  });
+};
+$("lookup").onsubmit = (event) => {
+  event.preventDefault();
+  const hash = $("lookup-hash").value.trim();
+  openVerifier(hash);
+  action(() => verifyOnAevum(hash));
+};
 drawHistory();
 action(async () => {
-  await bootLocal();
   const hash = new URLSearchParams(location.search).get("tx");
   if (hash && /^0x[0-9a-f]{64}$/i.test(hash)) {
     openVerifier(hash);

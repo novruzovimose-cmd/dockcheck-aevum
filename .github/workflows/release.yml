@@ -1,0 +1,72 @@
+name: Package release
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: [package.json]
+permissions:
+  contents: read
+concurrency:
+  group: dockcheck-release
+  cancel-in-progress: false
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.25.x'
+          cache: false
+      - run: npm ci
+      - run: npm test
+      - run: npm run package
+      - run: python3 scripts/check_release.py release/DockCheck-*.zip
+      - name: Load and serve the packaged Docker image
+        run: |
+          unzip -p release/DockCheck-*.zip DockCheck/delivery/dockcheck-linux-amd64.tar > "$RUNNER_TEMP/desk.tar"
+          docker load -i "$RUNNER_TEMP/desk.tar"
+          version=$(node -p 'require("./package.json").version')
+          docker run -d --name dockcheck-test -p 127.0.0.1:8180:8080 "dockcheck:$version"
+          curl --retry 8 --retry-connrefused -fsS http://127.0.0.1:8180/desk.js -o "$RUNNER_TEMP/desk.js"
+          cmp dist/desk.js "$RUNNER_TEMP/desk.js"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-package
+          path: release/DockCheck-*
+  windows:
+    needs: package
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-package
+          path: release
+      - run: python scripts/check_release.py (Get-ChildItem release/*.zip).FullName
+  publish:
+    if: github.ref == 'refs/heads/main'
+    needs: windows
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-package
+          path: release
+      - name: Publish the tested ZIP and checksum
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag=v$(node -p 'require("./package.json").version')
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "Release $tag already exists. Increment the package version for a new release."
+            exit 0
+          fi
+          gh release create "$tag" --target "$GITHUB_SHA" --title "DockCheck $tag" --notes-file docs/RELEASE.md release/DockCheck-*
