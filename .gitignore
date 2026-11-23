@@ -1,0 +1,10 @@
+node_modules/
+.env
+.env.*
+!.env.example
+.dockcheck/
+inbox/
+*.pending.json
+*.key
+runtime-output/
+delivery/*.tar

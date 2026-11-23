@@ -1,0 +1,9 @@
+{
+  "chainId": 44005,
+  "observedAt": "2026-11-23T21:03:57.009Z",
+  "blockTag": "latest",
+  "method": "eth_call contract creation",
+  "broadcast": false,
+  "runtimeBytes": 6345,
+  "runtimeHash": "0x627aea5d60266bc97631229d5ba55287090b04803313c1e4c88816b63ced5d52"
+}

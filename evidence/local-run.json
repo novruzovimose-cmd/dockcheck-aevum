@@ -1,0 +1,87 @@
+{
+  "environment": "Ephemeral local EVM, chain 31337",
+  "steps": [
+    {
+      "step": "Fund route",
+      "chainId": 31337,
+      "contract": "0xb217cDdE39c3BE7b7465FeBF6af4Ab7e1bE37fD5",
+      "owner": "0x113daBBebfEbAab360077e93b29C5fc0D33CAA42",
+      "carrier": "0x873d946a8c817CB822b9DD4EEDc088b5b953B20d",
+      "station": "0xDF0EE505aA0705083f56E96175F93F2c3dA08e90",
+      "agent": "0xB4E7AaB43b34de93D4543009cA650035E302736e",
+      "openTx": "0xc4f330868c3adc460b8c585237c8b21e26305f78db47adae057cfb3047aff2b9",
+      "budget": "4.50 LOCAL",
+      "rate": "0.125 LOCAL",
+      "temperature": "2.0 to 8.0 C",
+      "maxCrates": 12
+    },
+    {
+      "step": "Review signed receipt",
+      "crates": 6,
+      "lowC": 2.4,
+      "highC": 6.7,
+      "authorized": "0.75 LOCAL",
+      "ticketHash": "0x340ffdce84ca63b0916dc1e3915ea11727c9041c998ef948cd23f8a86db992c8"
+    },
+    {
+      "step": "Confirm carrier payment",
+      "verified": true,
+      "chainId": 31337,
+      "contract": "0xb217cDdE39c3BE7b7465FeBF6af4Ab7e1bE37fD5",
+      "carrier": "0x873d946a8c817CB822b9DD4EEDc088b5b953B20d",
+      "amountBaseUnits": "750000",
+      "block": 5,
+      "transactionHash": "0x8b4b32a7edee3009a035b8750746edb367f14d69c918d13dab97b397033db806"
+    },
+    {
+      "step": "Hold warm shipment",
+      "decision": "Held before broadcast",
+      "reason": "The recorded temperature is outside the route’s permitted range.",
+      "escrow": "3.75 LOCAL",
+      "carrier": "0.75 LOCAL"
+    },
+    {
+      "step": "Hold duplicate receipt",
+      "decision": "Held before broadcast",
+      "reason": "This lot has already been paid. No second payment was sent.",
+      "escrow": "3.75 LOCAL",
+      "carrier": "0.75 LOCAL"
+    },
+    {
+      "step": "Revoke and refund",
+      "refund": "3.75 LOCAL",
+      "escrow": "0.00 LOCAL",
+      "totalPaid": "0.75 LOCAL",
+      "transactionHash": "0x93c6bfe6071799a1e0909a908be59e602b0d947b981162bd3dc3a98699e57817"
+    }
+  ],
+  "proof": {
+    "version": 1,
+    "chainId": 31337,
+    "contract": "0xb217cDdE39c3BE7b7465FeBF6af4Ab7e1bE37fD5",
+    "transactionHash": "0x8b4b32a7edee3009a035b8750746edb367f14d69c918d13dab97b397033db806",
+    "blockHash": "0xfb297fe747407c4ffa3bfcc9320870775a6e5291b30457e3e67ee61aa869fdee",
+    "blockNumber": 5,
+    "route": "0xd090b0134bbbc49f42b9675e76988e443a5edb1e8440e3c3cb4d95646d721151",
+    "lot": "0x437c9b2cc81c34dadaf05765b24a76fc593232f1a78e4ef3ca2269575430dfbb",
+    "carrier": "0x873d946a8c817CB822b9DD4EEDc088b5b953B20d",
+    "crates": "6",
+    "amountBaseUnits": "750000",
+    "ticketHash": "0x340ffdce84ca63b0916dc1e3915ea11727c9041c998ef948cd23f8a86db992c8",
+    "envelope": {
+      "version": 1,
+      "chainId": 31337,
+      "contract": "0xb217cDdE39c3BE7b7465FeBF6af4Ab7e1bE37fD5",
+      "ticket": {
+        "route": "0xd090b0134bbbc49f42b9675e76988e443a5edb1e8440e3c3cb4d95646d721151",
+        "lot": "0x437c9b2cc81c34dadaf05765b24a76fc593232f1a78e4ef3ca2269575430dfbb",
+        "crates": 6,
+        "low": 24,
+        "high": 67,
+        "observedAt": 1795467671
+      },
+      "stationSig": "0xcde72143e6baf2465459136ded474fe8ba3ca4d2a070906e7742dad0778056fd5d011252261798dccd5257ccd99089ddeb98c1e1f87578e377c0a4ef84907f0f1b"
+    },
+    "agentSig": "0xfee75eb9ed27dd1df057ae63e9e58e68af3a5027a0963d79c571997364825704279c523bf3478c76dec16310fed4bd2e54c75ae9f4012f945a3513676c6f54b51b"
+  }
+}

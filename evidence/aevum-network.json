@@ -1,0 +1,10 @@
+{
+    "chainId": 44005,
+    "rpc": "https://rpc-test.qday.info",
+    "blockNumber": 3944769,
+    "blockHash": "0x9b816ff418e954798833e57cf54e84957c633fa67028b85a2e497f371a222db9",
+    "blockTime": "2026-11-23T20:04:05.000Z",
+    "tUSD8": "0x456569838f1d43009A91ebA4263147Afd7233483",
+    "tokenDecimals": 6,
+    "tokenRuntimeHash": "0x8ca3f6515f44e17a06beb2b30237e8437b0f4e49df2a82553b2531b5e7866ee8"
+}

@@ -1,0 +1,1 @@
+Docker/OCI archive manifests and layer SHA-256 digests validated. Linux/amd64 executable extracted from the image and exercised by HTTP with its packaged root filesystem. The host did not have a Docker daemon for docker load/run. Demo film has H.264 video, AAC audio and a separate subtitle file.

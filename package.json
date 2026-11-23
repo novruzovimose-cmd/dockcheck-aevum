@@ -1,0 +1,34 @@
+{
+  "name": "dockcheck-aevum",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Cold-chain delivery receipts that release capped tUSD8 freight payments.",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "compile": "node scripts/compile.mjs",
+    "build": "npm run compile && node scripts/build.mjs",
+    "test": "npm run compile && node --test tests/*.test.mjs",
+    "start": "node scripts/serve.mjs",
+    "agent": "node scripts/agent.mjs",
+    "proof": "node scripts/proof.mjs",
+    "route": "node scripts/route.mjs",
+    "ticket": "node scripts/ticket.mjs",
+    "demo": "node scripts/demo.mjs",
+    "simulate:aevum": "node scripts/simulate-aevum.mjs"
+  },
+  "dependencies": {
+    "@fontsource/barlow": "5.3.0",
+    "@fontsource/ibm-plex-mono": "5.3.0",
+    "@openzeppelin/contracts": "5.1.0",
+    "ethers": "6.15.0"
+  },
+  "devDependencies": {
+    "esbuild": "0.25.12",
+    "ganache": "7.9.2",
+    "solc": "0.8.28"
+  }
+}

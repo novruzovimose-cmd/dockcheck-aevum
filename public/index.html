@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#122855" />
+    <title>DockCheck · Receiving desk</title>
+    <meta
+      name="description"
+      content="Settle cold-chain freight against signed delivery receipts and a buyer-defined budget."
+    />
+    <link rel="icon" href="./assets/mark.png" />
+    <link rel="stylesheet" href="./desk.css" />
+    <script type="module" src="./desk.js"></script>
+  </head>
+  <body>
+    <a class="skip" href="#workspace">Skip to receiving desk</a>
+    <header>
+      <div class="wrap top">
+        <a class="brand" href="#workspace"
+          ><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span
+          >DockCheck</a
+        >
+        <nav aria-label="Workspace">
+          <a class="nav active" href="#workspace">Receiving desk</a
+          ><a class="nav" href="#ledger">Audit log</a
+          ><button class="nav" id="guide">Field guide</button>
+        </nav>
+        <button class="network" id="network">
+          <span class="light"></span
+          ><span id="network-text">Local rehearsal</span
+          ><span class="caret"></span>
+        </button>
+      </div>
+    </header>
+    <main id="workspace" class="wrap">
+      <div class="pagehead">
+        <div>
+          <p class="over">Freight operations</p>
+          <h1>Receiving desk</h1>
+        </div>
+        <button class="outline" id="policy">Route policy</button>
+      </div>
+      <section class="manifest" aria-label="Route manifest">
+        <div class="cover">
+          <div class="manifest-meta">
+            <span class="slim">ROUTE MANIFEST</span
+            ><span class="route-code">GE • 014</span>
+          </div>
+          <h2>Kutaisi to Tbilisi</h2>
+          <p>Refrigerated produce <span> / </span> Carrier settlement</p>
+          <div class="hero-status" id="route-status">Preparing desk</div>
+        </div>
+        <div class="art">
+          <img
+            src="./assets/reefer.png"
+            alt="Illustrated refrigerated freight truck"
+            width="1050"
+            height="560"
+          />
+        </div>
+      </section>
+      <section class="judge-tools" aria-label="Try DockCheck">
+        <div>
+          <h2>Pay for the crates the dock accepts</h2>
+          <p>Follow a 0.75 payment, two rejected receipts and a 3.75 refund.</p>
+        </div>
+        <div class="judge-actions">
+          <button class="primary" id="rehearse">Run the walkthrough</button>
+          <button class="outline" id="verify">Verify an Aevum payment</button>
+        </div>
+      </section>
+      <div class="balances" aria-label="Route balances">
+        <div>
+          <span>Available escrow</span><strong id="available">—</strong
+          ><small id="esc-unit">test units</small>
+        </div>
+        <div>
+          <span>Paid to carrier</span><strong id="paid">—</strong
+          ><small class="currency">test units</small>
+        </div>
+        <div>
+          <span>Price per crate</span><strong id="rate">—</strong
+          ><small class="currency">test units</small>
+        </div>
+        <div>
+          <span>Permitted range</span><strong id="range">2–8</strong
+          ><small>°C</small>
+        </div>
+      </div>
+      <div class="columns">
+        <section class="card ticket">
+          <div class="section-head">
+            <div>
+              <p class="over">Receiving station</p>
+              <h2>Delivery ticket</h2>
+            </div>
+            <span class="stamp">DOCK 04</span>
+          </div>
+          <div class="presets" role="group" aria-label="Test deliveries">
+            <button id="normal" class="preset selected" aria-pressed="true">
+              In range</button
+            ><button id="warm" class="preset" aria-pressed="false">
+              Warm load</button
+            ><button id="repeat" class="preset" aria-pressed="false" disabled>
+              Replay last
+            </button>
+          </div>
+          <form id="ticket-form">
+            <div class="fields">
+              <label
+                >Accepted crates<input
+                  id="crates"
+                  required
+                  type="number"
+                  inputmode="numeric"
+                  value="6"
+                  min="1"
+                  max="9999"
+                  step="1" /></label
+              ><label
+                >Low °C<input
+                  id="low"
+                  required
+                  type="number"
+                  value="2.4"
+                  min="-99"
+                  max="99"
+                  step="0.1" /></label
+              ><label
+                >High °C<input
+                  id="high"
+                  required
+                  type="number"
+                  value="6.7"
+                  min="-99"
+                  max="99"
+                  step="0.1"
+              /></label>
+            </div>
+            <div class="payout">
+              <span>Quoted freight</span><b id="quote">—</b>
+            </div>
+            <button class="primary full" id="review" disabled>
+              Review delivery
+            </button>
+          </form>
+        </section>
+        <section class="card agent">
+          <div class="section-head">
+            <div>
+              <p class="over">Settlement agent</p>
+              <h2>Policy checks</h2>
+            </div>
+            <span class="agent-mark" aria-hidden="true">✳</span>
+          </div>
+          <ul class="checks">
+            <li>
+              <i></i>
+              <div>
+                <b>Receiving authority</b
+                ><small>Ticket signed by the designated station</small>
+              </div>
+            </li>
+            <li>
+              <i></i>
+              <div>
+                <b>Condition and quantity</b
+                ><small id="limits"
+                  >Temperature band and per-ticket crate cap</small
+                >
+              </div>
+            </li>
+            <li>
+              <i></i>
+              <div>
+                <b>Budget and duplicate control</b
+                ><small>One transfer per lot within funded escrow</small>
+              </div>
+            </li>
+          </ul>
+          <div class="notice" role="status" id="notice">
+            Starting an isolated EVM in this browser…
+          </div>
+        </section>
+      </div>
+      <section class="card ledger" id="ledger">
+        <div class="section-head">
+          <div>
+            <p class="over">Settlement evidence</p>
+            <h2>Audit log</h2>
+          </div>
+          <div>
+            <button class="quiet" id="sync" hidden>Sync recent blocks</button
+            ><button class="outline" id="export" disabled>
+              Export evidence
+            </button>
+          </div>
+        </div>
+        <div id="history" role="list"></div>
+      </section>
+      <footer>
+        <span>DockCheck / Freight settlement</span
+        ><button id="source">Contract source</button
+        ><a
+          href="https://qday.io/builder-challenge"
+          target="_blank"
+          rel="noreferrer"
+          >QDay Aevum</a
+        >
+      </footer>
+    </main>
+    <dialog id="modal">
+      <div class="modal-top">
+        <div>
+          <p class="over" id="modal-kicker"></p>
+          <h2 id="modal-title"></h2>
+        </div>
+        <button class="close" id="dismiss" aria-label="Close dialog">×</button>
+      </div>
+      <div id="modal-body"></div>
+    </dialog>
+    <noscript
+      >Enable JavaScript to run the receiving desk. The repository also includes
+      a command-line agent.</noscript
+    >
+  </body>
+</html>

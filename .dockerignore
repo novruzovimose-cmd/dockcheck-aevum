@@ -1,0 +1,7 @@
+*
+!container/
+!container/main.go
+!dist/
+!dist/**
+!licenses/
+!licenses/Go.txt
