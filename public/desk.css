@@ -793,29 +793,6 @@ dialog a {
     scroll-behavior: auto;
   }
 }
-.judge-tools {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  background: #e9efff;
-  border: 1px solid #c8d5f3;
-  padding: 14px 20px;
-  margin: 14px 0;
-  border-radius: 7px;
-}
-.judge-tools h2 {
-  font-size: 21px;
-}
-.judge-tools p {
-  color: var(--muted);
-  margin-top: 3px;
-}
-.judge-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
 .walkthrough {
   padding-left: 23px;
   margin: 18px 0;
@@ -839,12 +816,6 @@ dialog a {
   padding: 4px 0;
   color: var(--blue);
   text-decoration: underline;
-}
-@media (max-width: 730px) {
-  .judge-tools {
-    flex-direction: column;
-    align-items: flex-start;
-  }
 }
 label select {
   display: block;
@@ -874,4 +845,347 @@ label select {
 }
 .audit-movements small {
   grid-column: 1 / -1;
+}
+
+/* The manifest, its balances and the signed receipts read as one freight record. */
+:root {
+  --ink: #132f2c;
+  --muted: #4e645f;
+  --line: #cdd8d1;
+  --paper: #f3f5ef;
+  --blue: #14624f;
+  --navy: #103832;
+  --mint: #dcf695;
+}
+header {
+  background: #102f2b;
+  color: #fbfff5;
+  border: 0;
+}
+.top {
+  gap: clamp(22px, 5vw, 70px);
+}
+.mark {
+  background: #dcf695;
+}
+.mark i {
+  background: #133832;
+}
+.nav {
+  color: #c0d1c8;
+}
+.nav:hover,
+.nav.active {
+  color: #e4f8a7;
+  border-bottom-color: #c9e78b;
+}
+.network {
+  background: #1d413a;
+  color: #f3ffef;
+  border-color: #4f6b60;
+}
+.network .light {
+  background: #d6f495;
+}
+.pagehead {
+  margin: 30px 0 17px;
+}
+.pagehead .over,
+.section-head .over,
+.over {
+  color: #436556;
+}
+.manifest {
+  border-radius: 16px 16px 0 0;
+  min-height: 224px;
+  background-color: #123b34;
+  background-image:
+    linear-gradient(115deg, #0e302a 8%, transparent 68%),
+    repeating-linear-gradient(0deg, transparent 0 23px, #d5f3c516 23px 24px),
+    repeating-linear-gradient(90deg, transparent 0 23px, #d5f3c516 23px 24px);
+  background-size: auto;
+}
+.cover {
+  width: 62%;
+  padding: 28px 36px;
+}
+.cover h2 {
+  font-size: clamp(39px, 5vw, 70px);
+  line-height: 1.05;
+}
+.route-to {
+  color: #c6e996;
+  font-weight: 400;
+}
+.slim,
+.cover p {
+  color: #e1eee6;
+}
+.route-code {
+  border-color: #88a092;
+}
+.art {
+  left: 57%;
+  background: radial-gradient(ellipse at center, #9bcc9a38, transparent 69%);
+}
+.art img {
+  width: min(93%, 450px);
+  filter: drop-shadow(1px 12px 8px #001e1a70);
+}
+.art::before,
+.art::after {
+  display: none;
+}
+.hero-status {
+  font-size: 12px;
+  border-radius: 100px;
+  padding: 5px 12px;
+  letter-spacing: 0.04em;
+}
+.balances {
+  border-radius: 0 0 16px 16px;
+  box-shadow: 0 6px 18px #18342b08;
+}
+.balances strong {
+  font-variant-numeric: tabular-nums;
+}
+.case-strip,
+.invoice-desk {
+  display: grid;
+  grid-template-columns: 1.45fr 1fr;
+  gap: clamp(12px, 3vw, 42px);
+  align-items: center;
+  padding: 24px 28px;
+  border-radius: 14px;
+  margin: 20px 0;
+}
+.case-strip {
+  background: #e3efd5;
+  border: 1px solid #c5d7b8;
+}
+.case-strip h2 {
+  font-size: clamp(22px, 2.5vw, 30px);
+}
+.case-strip p:not(.over),
+.invoice-heading p:not(.over) {
+  margin-top: 5px;
+  color: var(--muted);
+}
+.case-actions {
+  justify-self: end;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: end;
+  gap: 4px;
+}
+.primary,
+.outline,
+.secondary,
+.quiet {
+  border-radius: 7px;
+}
+.primary {
+  background: #155b49;
+  border-color: #155b49;
+}
+.primary:hover:enabled {
+  background: #0b4334;
+}
+.card {
+  border-radius: 14px;
+  box-shadow: 0 4px 12px #24523b05;
+}
+.stamp {
+  background: #f4f5e7;
+  color: #40563d;
+  border-color: #a1af8c;
+  transform: none;
+}
+.preset.selected {
+  border-color: #82a695;
+  background: #e6f2e7;
+  color: #174c38;
+}
+.payout {
+  background: #f1f6ef;
+  padding: 12px 14px;
+  border-radius: 8px;
+}
+.invoice-desk {
+  background: #163b34;
+  color: #fff;
+  padding: 30px;
+}
+.invoice-desk .over {
+  color: #d6efa2;
+}
+.invoice-desk h2 {
+  font-size: clamp(29px, 3vw, 41px);
+}
+.invoice-heading p:not(.over) {
+  color: #d2e4d9;
+  max-width: 49ch;
+}
+.invoice-start {
+  padding: 0 0 0 22px;
+  border-left: 1px dashed #6a887a;
+}
+.spec-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 0 8px;
+  font-size: 14px;
+}
+.spec-line span {
+  color: #c9ddd0;
+}
+.invoice-start .primary {
+  margin-top: 5px;
+  background: #dcf695;
+  color: #163528;
+  border-color: #dcf695;
+}
+.invoice-start .primary:hover {
+  background: #edfbc3;
+}
+.ledger .section-head > div:last-child {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: end;
+  gap: 4px;
+}
+.ledger [hidden] {
+  display: none;
+}
+.notice {
+  background: #f1f5ed;
+  border-color: #a2b9a5;
+}
+dialog {
+  border-radius: 15px;
+  padding: clamp(18px, 3vw, 30px);
+}
+.invoice-result {
+  border-left: 4px solid #438563;
+  background: #eef7ee;
+  padding: 12px 15px;
+  margin: 14px 0;
+}
+.invoice-result.review {
+  border-color: #b87522;
+  background: #fff2d9;
+}
+.invoice-result h3 {
+  margin: 0;
+}
+.invoice-result p {
+  margin: 4px 0 0;
+  color: var(--ink);
+}
+.invoice-form fieldset {
+  margin: 15px 0;
+  padding: 0;
+  border: 0;
+}
+.invoice-form legend {
+  color: var(--muted);
+  font-size: 14px;
+}
+.invoice-form .pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.invoice-form label {
+  margin: 9px 0;
+}
+@media (max-width: 760px) {
+  .case-strip,
+  .invoice-desk {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+  .case-actions {
+    justify-self: start;
+    justify-content: start;
+  }
+  .invoice-start {
+    border: 0;
+    border-top: 1px dashed #6a887a;
+    padding: 14px 0 0;
+  }
+  .ledger .section-head {
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 640px) {
+  .top {
+    gap: 0;
+  }
+  .cover {
+    width: 80%;
+    padding: 18px;
+  }
+  .cover h2 {
+    font-size: clamp(31px, 7.2vw, 45px);
+  }
+  .art {
+    left: 64%;
+    bottom: 10px;
+    top: 48px;
+    opacity: 0.85;
+  }
+  .art img {
+    width: 100%;
+  }
+  .manifest {
+    min-height: 185px;
+  }
+  .pagehead {
+    margin: 20px 0 14px;
+  }
+  .invoice-form .pair {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+}
+
+@media print {
+  body:has(#invoice-output h3) > :not(dialog) {
+    display: none;
+  }
+  body:has(#invoice-output h3) {
+    background: white;
+  }
+  dialog:has(#invoice-output h3) {
+    display: block;
+    position: static;
+    inset: auto;
+    margin: 0;
+    width: 100%;
+    max-width: none;
+    max-height: none;
+    border: 0;
+    box-shadow: none;
+    overflow: visible;
+  }
+  dialog::backdrop {
+    background: none;
+  }
+  dialog:has(#invoice-output h3) button,
+  dialog:has(#invoice-output h3) form,
+  dialog:has(#invoice-output h3) .dialog-note {
+    display: none;
+  }
+  dialog:has(#invoice-output h3) .modal-top h2 {
+    font-size: 0;
+  }
+  dialog:has(#invoice-output h3) .modal-top h2::after {
+    content: "DockCheck freight invoice report";
+    font-size: 24pt;
+  }
+  .invoice-result {
+    break-inside: avoid;
+  }
 }

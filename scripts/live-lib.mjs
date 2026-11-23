@@ -1,5 +1,11 @@
 import fs from "node:fs";
-import { Contract, JsonRpcProvider, Wallet, getAddress } from "ethers";
+import {
+  Contract,
+  FetchRequest,
+  JsonRpcProvider,
+  Wallet,
+  getAddress,
+} from "ethers";
 import { assertDesk, asJSON, net, tokenABI } from "../src/protocol.mjs";
 if (fs.existsSync(".env")) process.loadEnvFile(".env");
 export function need(name) {
@@ -11,11 +17,31 @@ export function wallet(name, provider) {
   return new Wallet(need(name), provider);
 }
 export async function live() {
-  const provider = new JsonRpcProvider(
-    process.env.AEVUM_RPC_URL || net.rpc,
-    undefined,
-    { batchMaxCount: 1, cacheTimeout: -1 },
-  );
+  const request = new FetchRequest(process.env.AEVUM_RPC_URL || net.rpc);
+  request.timeout = 30000;
+  // Use the runtime transport so managed networks can apply their HTTPS proxy.
+  request.getUrlFunc = async (req, cancel) => {
+    const abort = new AbortController();
+    cancel?.checkSignal();
+    cancel?.addListener(() => abort.abort());
+    const response = await fetch(req.url, {
+      method: req.method,
+      headers: req.headers,
+      body: req.body,
+      redirect: "error",
+      signal: AbortSignal.any([abort.signal, AbortSignal.timeout(req.timeout)]),
+    });
+    return {
+      statusCode: response.status,
+      statusMessage: response.statusText,
+      headers: Object.fromEntries(response.headers),
+      body: new Uint8Array(await response.arrayBuffer()),
+    };
+  };
+  const provider = new JsonRpcProvider(request, undefined, {
+    batchMaxCount: 1,
+    cacheTimeout: -1,
+  });
   const network = await provider.getNetwork();
   if (network.chainId !== 44005n)
     throw Error("Aborted: RPC is not Aevum chain 44005.");

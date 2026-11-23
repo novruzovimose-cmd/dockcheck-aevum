@@ -1,0 +1,70 @@
+{
+  "version": 1,
+  "chainId": 44005,
+  "contract": "0x181BA084DCb2946EB65Cb020B85dA5e8ED44431e",
+  "token": "0x456569838f1d43009A91ebA4263147Afd7233483",
+  "route": "0x1dacd99eb5df32785dd35fb9365ece3b2cbf36f61c563fa139a76692788dc344",
+  "buyer": "0xEc3E0e30f3A9372bdCABbF2f601b13608AF54409",
+  "carrier": "0x209924858371b2dB915C2C8001448D2945fA9cF9",
+  "station": "0xd289d5bB99aAc2FbD79af45bD99547795790076B",
+  "agent": "0xFC8EF80a12c4c6970F3D1287d8356258AB6d02b7",
+  "fundedBaseUnits": "100000",
+  "paidBaseUnits": "60000",
+  "refundedBaseUnits": "40000",
+  "remainingBaseUnits": "0",
+  "unitPriceBaseUnits": "10000",
+  "limits": {
+    "maxCrates": 10,
+    "low": 20,
+    "high": 80,
+    "expiry": 1795555994
+  },
+  "funding": {
+    "hash": "0xa9534597038e065c352d880b9b53c7d85879dbe177278ff1eceaca3179702099",
+    "block": 3950058,
+    "blockHash": "0x2a30b6810a7c7ab9f9418c7f2636288d323f11e5fb507be15641741970c73010"
+  },
+  "settlement": {
+    "hash": "0xb0dde94cdef82452a2113eae4a74871ef5e432ea528bccf8c684e7623c0030ad",
+    "block": 3950073,
+    "blockHash": "0x88f61af4afa54dcfa07123d51fa801026d404ddb28e1a047dfb6bbb5263840cb"
+  },
+  "refund": {
+    "hash": "0x3f0a89e1bd8226661836f791923a0591cee3a5e9acb7f0f2ccb3a20c04822c0a",
+    "block": 3950095,
+    "blockHash": "0x73f6f88674211a348bfc86ac1a871c0fddce8a4bb779578efcd9339b740eece9"
+  },
+  "proof": {
+    "version": 1,
+    "chainId": 44005,
+    "contract": "0x181BA084DCb2946EB65Cb020B85dA5e8ED44431e",
+    "transactionHash": "0xb0dde94cdef82452a2113eae4a74871ef5e432ea528bccf8c684e7623c0030ad",
+    "blockHash": "0x88f61af4afa54dcfa07123d51fa801026d404ddb28e1a047dfb6bbb5263840cb",
+    "blockNumber": 3950073,
+    "route": "0x1dacd99eb5df32785dd35fb9365ece3b2cbf36f61c563fa139a76692788dc344",
+    "lot": "0x102ad4175e473fd88495ff4f874c9238c8ef7b5a6caadaf5e45bbb821bffb9f3",
+    "carrier": "0x209924858371b2dB915C2C8001448D2945fA9cF9",
+    "crates": "6",
+    "amountBaseUnits": "60000",
+    "ticketHash": "0x5bc891f92a1a8a2ba13bf5786878062ad354c52b4c6edd8f4a233922b0fbe77d",
+    "envelope": {
+      "version": 1,
+      "chainId": 44005,
+      "contract": "0x181BA084DCb2946EB65Cb020B85dA5e8ED44431e",
+      "ticket": {
+        "route": "0x1dacd99eb5df32785dd35fb9365ece3b2cbf36f61c563fa139a76692788dc344",
+        "lot": "0x102ad4175e473fd88495ff4f874c9238c8ef7b5a6caadaf5e45bbb821bffb9f3",
+        "crates": 6,
+        "low": 24,
+        "high": 67,
+        "observedAt": 1795469608
+      },
+      "stationSig": "0xa0c30c8a50d4883f6e0a261d2c052fea7ce23eda12343c9697731ddf22c97e8570d84978c579235022b2003998263170daa57629d9fee5cd300e6243c89abb8d1c"
+    },
+    "agentSig": "0x55147e438c7fe8b37407dcdc8b8ad62bc48cb7ff5b8c0a7e29920483665f2c382c6b861ede12560de992c68a70314eb73c6b14f54b927e3162fb7cc3a6bb3ee51c"
+  },
+  "deployment": {
+    "hash": "0xb1432ef83b86d979c1f687fd3a10967c85c51d65bffd10474043e7964781f1ea",
+    "block": 3950016
+  }
+}

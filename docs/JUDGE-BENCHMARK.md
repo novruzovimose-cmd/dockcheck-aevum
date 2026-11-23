@@ -19,10 +19,10 @@ These are ten hypothetical entries a judge could compare against DockCheck. They
 
 A buyer escrows freight money. A receiving station and scoped agent sign the same cold-chain ticket. The carrier is paid once for the accepted crates. The buyer closes the route and reclaims the balance. The judge independently reconciles the whole flow using **three transaction hashes**. Bad deliveries and repeated lots do not generate another transfer.
 
-Run **Run the walkthrough**, then **Inspect route audit** to see that result immediately. For public Aevum evidence, run the faucet-sized pilot, save the packet, and paste the three hashes in **Audit a route**. Its audit intentionally covers one payout, so incomplete evidence for a multi-payout route is rejected. The CLI can re-verify the packet from any local checkout.
+Run **Run local walkthrough**, then **Inspect route audit** to see that result immediately. For public Aevum evidence, open **View pilot receipt** and choose **Recheck on Aevum**. The three hashes are prefilled. Its audit intentionally covers one payout, so incomplete evidence for a multi-payout route is rejected. The CLI can re-verify the packet from any local checkout.
 
 ## What could still outrank this
 
-A competitor with real carrier feedback and a mined Aevum receipt has stronger evidence even if its interface is simpler. A competitor with verifiable sensor provenance has a stronger answer to dishonest temperature input. The next comparison should measure a live Aevum run and feedback from one freight operator. Treat adoption, automated sensor truth, and public settlement as claims that need their own evidence.
+A competitor with real carrier feedback can make a stronger adoption case. A competitor with verifiable sensor provenance has a stronger answer to dishonest temperature input. The public pilot now demonstrates mined settlement. The next comparison should collect feedback from a freight operator. Treat adoption, automated sensor truth, and public settlement as claims that need their own evidence.
 
 Reference points for the product concepts include structured electronic trade documents and QDay's published ecosystem capabilities. See [CargoX](https://cargox.io/create-documents), [QDay Wiki](https://wiki.qday.info/guide/handbook/ecosystem/) and the [challenge rubric](https://qday.io/builder-challenge).

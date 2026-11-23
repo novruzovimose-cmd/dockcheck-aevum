@@ -14,7 +14,13 @@ Only use test tokens. The buyer needs enough test gas for deployment and funding
 
 Run `npm run simulate:aevum` to execute the constructor on the official RPC at its latest block and compare the returned runtime to the build. This read-only call requires no tokens and creates no contract address.
 
+## Inspect the completed pilot
+
+The repository includes the mined [Aevum pilot](../evidence/aevum-pilot.json). From a source checkout run `npm ci`, `npm run verify:source` and `npm run audit -- evidence/aevum-pilot.json`. All three chain checks (funding, payment and refund) are read-only. The source check compiles the published Solidity standard input and checks the original deployment calldata and the current runtime. The explorer returned HTTP 403 from the release environment when checking its verification API. An explorer badge has not been confirmed.
+
 ## Browser path
+
+The deployment desk prefills the mined pilot contract address. Choose **Use existing contract** to check its runtime and open a new route there.
 
 1. Start the prebuilt desk. Open the **Local rehearsal** network menu. **Check live network** reads chain ID, token decimals, runtime hash and the latest block without connecting a wallet.
 2. Choose **Connect to Aevum** and approve the wallet's network switch. Confirm chain 44005. **Deploy new contract** deploys DockCheck with the official token address. Keep the deployment hash from your wallet. Alternatively enter an existing address. The client requires a complete runtime-bytecode match and the official token.

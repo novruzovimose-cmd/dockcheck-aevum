@@ -1,3 +1,5 @@
+import pilot from "../evidence/aevum-pilot.json" with { type: "json" };
+import { compareInvoice } from "./invoice.mjs";
 import {
   BrowserProvider,
   JsonRpcProvider,
@@ -664,10 +666,10 @@ function liveSetup() {
       ["Token", net.token],
     ]) +
       '<label>Existing DockCheck address<input id="desk-address" placeholder="0x…" value="' +
-      esc(c.contract?.target || m.contract || "") +
+      esc(c.contract?.target || m.contract || pilot.contract) +
       '"></label><div class="modal-actions">' +
-      button("attach", "Use existing", "secondary") +
-      button("deploy", "Deploy new contract") +
+      button("attach", "Use existing contract") +
+      button("deploy", "Deploy new contract", "secondary") +
       "</div>",
   );
   bind("attach", async () => {
@@ -899,6 +901,12 @@ function showVerified({ proof, terms }, live) {
           "</div>"
         : "<p>This receipt can be verified in the browser while its local chain is running.</p>"),
   );
+  $("modal-body").insertAdjacentHTML(
+    "beforeend",
+    button("proof-invoice", "Check carrier invoice", "secondary"),
+  );
+  $("proof-invoice").onclick = () =>
+    showInvoice(proof, live ? "Verified on Aevum" : "Verified on local chain");
   if (live)
     bind("share-proof", async () => {
       const url = new URL(location.pathname, location.origin);
@@ -942,7 +950,7 @@ function openVerifier(hash = "") {
 
 $("verify").onclick = () => openVerifier();
 
-function showRouteAudit(packet) {
+function showRouteAudit(packet, saved = false) {
   const live = packet.chainId === 44005;
   const token = live ? "tUSD8" : "LOCAL";
   const rows = [
@@ -979,8 +987,12 @@ function showRouteAudit(packet) {
     "</ol>";
   openModal(
     live ? "QDay Aevum · 44005" : "Local Solidity rehearsal · 31337",
-    "Route reconciled",
-    '<p class="verified-note">Three transactions verified. Funded escrow equals the carrier payout plus the buyer refund.</p>' +
+    saved ? "Recorded pilot receipt" : "Route reconciled",
+    '<p class="verified-note">' +
+      (saved
+        ? "Saved from a completed Aevum run. Recheck these three transactions against the public chain at any time."
+        : "Three transactions verified. Funded escrow equals the carrier payout plus the buyer refund.") +
+      "</p>" +
       movements +
       facts([
         ["Escrow remaining", "0 " + token],
@@ -989,9 +1001,18 @@ function showRouteAudit(packet) {
         ["Carrier", packet.carrier],
       ]) +
       '<div class="modal-actions">' +
+      button("audit-invoice", "Check carrier invoice") +
+      (saved ? button("audit-live", "Recheck on Aevum", "secondary") : "") +
       button("audit-download", "Export audit packet", "secondary") +
       "</div>",
   );
+  $("audit-invoice").onclick = () =>
+    showInvoice(
+      packet.proof,
+      saved ? recorded : live ? "Verified on Aevum" : "Verified on local chain",
+      packet.settlement.hash === pilot.settlement.hash,
+    );
+  if (saved) $("audit-live").onclick = () => openAudit(pilotHashes);
   $("audit-download").onclick = () =>
     downloadJSON("dockcheck-route-" + packet.chainId + ".json", packet);
 }
@@ -1100,6 +1121,137 @@ bind("rehearse", async () => {
   $("walk-export").onclick = () =>
     downloadJSON("dockcheck-local-walkthrough.json", result);
 });
+function showInvoice(proof, evidence, example = false) {
+  const currency = proof.chainId === 44005 ? "tUSD8" : "LOCAL";
+  openModal(
+    "Accounts payable · " + currency,
+    "Check an invoice line",
+    "<p>Compare the freight charge for this lot. Enter the line total before taxes and other fees.</p>" +
+      facts([
+        ["Receipt source", evidence],
+        ["Carrier", proof.carrier],
+        ["Lot", proof.lot],
+        [
+          "Accepted / paid",
+          proof.crates +
+            " crates · " +
+            exactToken(proof.amountBaseUnits) +
+            " " +
+            currency,
+        ],
+      ]) +
+      '<form id="invoice-form" class="invoice-form"><fieldset><legend>' +
+      (example
+        ? "Example carrier invoice · editable"
+        : "Carrier invoice line") +
+      '</legend><label>Invoice reference<input name="reference" maxlength="80" required></label><div class="pair">' +
+      '<label>Billed crates<input name="quantity" type="number" min="1" max="999999999" step="1" required></label>' +
+      "<label>Freight total (" +
+      currency +
+      ')<input name="total" inputmode="decimal" required></label></div>' +
+      '</fieldset><button class="primary" type="submit">Compare invoice</button></form>' +
+      '<div id="invoice-output" aria-live="polite"></div>',
+  );
+  const form = $("invoice-form"),
+    result = $("invoice-output");
+  if (example) {
+    form.elements.reference.value = "GE-014 / sample";
+    form.elements.quantity.value = "8";
+    form.elements.total.value = "0.08";
+  }
+  form.oninput = () => {
+    result.replaceChildren();
+    $("dialog-note").textContent = "";
+  };
+  form.onsubmit = (event) => {
+    event.preventDefault();
+    try {
+      const report = compareInvoice(
+        proof,
+        Object.fromEntries(new FormData(form)),
+      );
+      const delta = BigInt(report.differenceBaseUnits),
+        crates = report.cratesDifference;
+      const quantityText =
+        crates === 0
+          ? "Billed and accepted quantities agree."
+          : Math.abs(crates) +
+            (Math.abs(crates) === 1 ? " crate" : " crates") +
+            (crates > 0
+              ? " billed above the accepted count."
+              : " fewer billed than accepted.");
+      const valueText =
+        delta === 0n
+          ? "The freight total matches the payment."
+          : exactToken(delta < 0n ? -delta : delta) +
+            " " +
+            currency +
+            (delta > 0n
+              ? " billed above the payment."
+              : " billed below the payment.");
+      result.innerHTML =
+        '<div class="invoice-result ' +
+        (report.status === "Matched" ? "" : "review") +
+        '"><h3>' +
+        report.status +
+        "</h3><p>" +
+        esc(quantityText + " " + valueText) +
+        "</p></div>" +
+        facts([
+          ["Invoice", report.reference],
+          [
+            "Billed",
+            report.billedCrates +
+              " crates · " +
+              exactToken(report.billedBaseUnits) +
+              " " +
+              currency,
+          ],
+          [
+            "Accepted and paid",
+            report.acceptedCrates +
+              " crates · " +
+              exactToken(report.paidBaseUnits) +
+              " " +
+              currency,
+          ],
+          ["Settlement transaction", report.transaction],
+        ]) +
+        '<div class="modal-actions">' +
+        button("invoice-print", "Print report") +
+        button("invoice-export", "Export report JSON", "secondary") +
+        "</div>";
+      $("invoice-print").onclick = () => window.print();
+      $("dialog-note").textContent = "";
+      $("invoice-export").onclick = () =>
+        downloadJSON("dockcheck-invoice-variance.json", {
+          ...report,
+          evidenceSource: evidence,
+          invoiceInput: "Entered by the operator",
+          measuredAgainst: "One settled lot",
+        });
+    } catch (error) {
+      result.replaceChildren();
+      $("dialog-note").textContent = error.message;
+    }
+  };
+}
+
+const pilotHashes = Object.fromEntries(
+  ["funding", "settlement", "refund"].map((key) => [key, pilot[key].hash]),
+);
+const recorded =
+  "Saved Aevum receipt · block " +
+  pilot.settlement.block.toLocaleString("en-US");
+$("pilot-summary").textContent =
+  exactToken(pilot.paidBaseUnits) +
+  " tUSD8 paid · " +
+  exactToken(pilot.refundedBaseUnits) +
+  " tUSD8 refunded · block " +
+  pilot.settlement.block.toLocaleString("en-US");
+$("pilot").onclick = () => showRouteAudit(pilot, true);
+$("invoice-pilot").onclick = () => showInvoice(pilot.proof, recorded, true);
+
 function downloadJSON(name, data) {
   const a = document.createElement("a");
   a.href = URL.createObjectURL(

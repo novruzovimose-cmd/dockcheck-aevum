@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <meta name="theme-color" content="#122855" />
+    <meta name="theme-color" content="#0d322f" />
     <title>DockCheck · Receiving desk</title>
     <meta
       name="description"
@@ -23,6 +23,7 @@
         >
         <nav aria-label="Workspace">
           <a class="nav active" href="#workspace">Receiving desk</a
+          ><a class="nav" href="#invoices">Invoice check</a
           ><a class="nav" href="#ledger">Audit log</a
           ><button class="nav" id="guide">Field guide</button>
         </nav>
@@ -36,19 +37,19 @@
     <main id="workspace" class="wrap">
       <div class="pagehead">
         <div>
-          <p class="over">Freight operations</p>
+          <p class="over">Cold-chain freight</p>
           <h1>Receiving desk</h1>
         </div>
-        <button class="outline" id="policy">Route policy</button>
+        <button class="outline" id="policy">View route policy</button>
       </div>
       <section class="manifest" aria-label="Route manifest">
         <div class="cover">
           <div class="manifest-meta">
-            <span class="slim">ROUTE MANIFEST</span
-            ><span class="route-code">GE • 014</span>
+            <span class="slim">Freight manifest</span
+            ><span class="route-code">GE / 014</span>
           </div>
-          <h2>Kutaisi to Tbilisi</h2>
-          <p>Refrigerated produce <span> / </span> Carrier settlement</p>
+          <h2>Kutaisi <span class="route-to">to</span> Tbilisi</h2>
+          <p>Refrigerated produce · Carrier settlement</p>
           <div class="hero-status" id="route-status">Preparing desk</div>
         </div>
         <div class="art">
@@ -58,17 +59,6 @@
             width="1050"
             height="560"
           />
-        </div>
-      </section>
-      <section class="judge-tools" aria-label="Try DockCheck">
-        <div>
-          <h2>Pay for the crates the dock accepts</h2>
-          <p>Follow a 0.75 payment, two rejected receipts and a 3.75 refund.</p>
-        </div>
-        <div class="judge-actions">
-          <button class="primary" id="rehearse">Run the walkthrough</button>
-          <button class="outline" id="verify">Verify payment</button>
-          <button class="outline" id="audit-route">Audit a route</button>
         </div>
       </section>
       <div class="balances" aria-label="Route balances">
@@ -89,6 +79,19 @@
           ><small>°C</small>
         </div>
       </div>
+      <section class="case-strip" aria-labelledby="case-title">
+        <div>
+          <p class="over">Aevum testnet receipt</p>
+          <h2 id="case-title">Six crates received. One carrier payment.</h2>
+          <p id="pilot-summary">
+            Open the recorded testnet receipt to inspect the carrier payment.
+          </p>
+        </div>
+        <div class="case-actions">
+          <button class="primary" id="pilot">View pilot receipt</button
+          ><button class="quiet" id="rehearse">Run local walkthrough</button>
+        </div>
+      </section>
       <div class="columns">
         <section class="card ticket">
           <div class="section-head">
@@ -185,6 +188,31 @@
           </div>
         </section>
       </div>
+      <section
+        class="invoice-desk"
+        id="invoices"
+        aria-labelledby="invoice-title"
+      >
+        <div class="invoice-heading">
+          <p class="over">Accounts payable</p>
+          <h2 id="invoice-title">Check a freight invoice</h2>
+          <p>
+            Match one carrier invoice line to the crates the station accepted
+            and the amount already paid.
+          </p>
+        </div>
+        <div class="invoice-start">
+          <div class="spec-line">
+            <span>Evidence</span><b>Signed settlement receipt</b>
+          </div>
+          <div class="spec-line">
+            <span>Output</span><b>Invoice variance report</b>
+          </div>
+          <button id="invoice-pilot" class="primary full">
+            Check the pilot invoice
+          </button>
+        </div>
+      </section>
       <section class="card ledger" id="ledger">
         <div class="section-head">
           <div>
@@ -192,7 +220,9 @@
             <h2>Audit log</h2>
           </div>
           <div>
-            <button class="quiet" id="sync" hidden>Sync recent blocks</button
+            <button class="quiet" id="verify">Verify payment</button
+            ><button class="quiet" id="audit-route">Audit a route</button
+            ><button class="quiet" id="sync" hidden>Sync recent blocks</button
             ><button class="outline" id="export" disabled>
               Export evidence
             </button>
@@ -211,7 +241,7 @@
         >
       </footer>
     </main>
-    <dialog id="modal">
+    <dialog id="modal" aria-labelledby="modal-title">
       <div class="modal-top">
         <div>
           <p class="over" id="modal-kicker"></p>

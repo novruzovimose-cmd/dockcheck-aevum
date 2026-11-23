@@ -4,7 +4,9 @@
 
 The example route runs from Kutaisi to Tbilisi. The example crate prices and temperature band are fictional contract terms. Each buyer sets terms for its own cargo.
 
-Use **Run the walkthrough**, then **Inspect route audit**, to verify one complete escrow lifecycle. **Verify payment** checks one Aevum transaction. **Audit a route** reconstructs the funding, payout and refund from three hashes without connecting a wallet.
+**Try the mined receipt first.** Open **View pilot receipt**, choose **Check carrier invoice**, then **Compare invoice**. The editable example bills eight crates at 0.08 tUSD8. The signed receipt records six crates and a 0.06 payment. DockCheck flags the two-crate, 0.02 tUSD8 difference. Correct the line to six crates and 0.06 and it matches. Print the report for the carrier or export JSON for accounts payable. Invoice details stay in the browser. The example shipment and invoice are fictional. The testnet payment is mined.
+
+Use **Run local walkthrough**, then **Inspect route audit**, to verify a separate local escrow lifecycle. **Verify payment** checks one Aevum transaction. **Audit a route** reconstructs the funding, payout and refund from three hashes without connecting a wallet.
 
 ## Start here
 
@@ -15,7 +17,7 @@ Use **Run the walkthrough**, then **Inspect route audit**, to verify one complet
 | Run without Node | Load the packaged Linux/amd64 image using the commands below. |
 | Watch a short demo | Open **delivery/DockCheck-demo.mp4**. It plays back a recorded local Solidity execution. |
 | Run on QDay Aevum | Open **docs/AEVUM.md**. The browser supports deployment with a wallet. The CLI supports separated station, agent and relayer processes. |
-| Present or submit | **docs/PITCH.md** includes the live demo script, submission copy, business assumptions and outstanding evidence fields. |
+| Present or submit | **docs/PITCH.md** includes the live demo script, submission copy, business assumptions and the mined evidence links. |
 
 From a GitHub source checkout, run `npm ci && npm run build` before launching the desk. The prebuilt ZIP has no package-install step, bundled fonts and an in-browser EVM. The LOCAL units in the rehearsal exist only in that tab. Reloading starts a new rehearsal. The public-testnet mode uses the official token on chain 44005.
 
@@ -28,7 +30,7 @@ From a GitHub source checkout, run `npm ci && npm run build` before launching th
 
 ### Docker
 
-The ZIP includes a loadable image without any npm or blockchain service dependency for the rehearsal.
+The downloadable project ZIP includes a loadable image without any npm or blockchain service dependency for the rehearsal.
 
 ```sh
 docker load -i delivery/dockcheck-linux-amd64.tar
@@ -49,7 +51,7 @@ npm run demo
 npm start
 ```
 
-The included test report records 30 passing tests. One integration test uses a loopback-only Aevum-shaped fixture to exercise the full CLI, including a relayer restart. Tests compile the contracts with solc-js and execute the bytecode in Ganache. Coverage includes authorization, exact transfer amounts, conservation of the route budget, sender-independent relaying, freshness, expiry, revocation, duplicate lots, altered signatures, modified evidence, and reconstructing a lost receipt from calldata. The demo writes the fresh full transcript and signatures to `runtime-output/local-run.json`. Each run uses new local addresses and hashes. This is a functional test suite, not a security audit.
+The included test report records 34 passing tests. One integration test uses a loopback-only Aevum-shaped fixture to exercise the full CLI, including a relayer restart. Tests compile the contracts with solc-js and execute the bytecode in Ganache. Coverage includes authorization, exact transfer amounts, conservation of the route budget, sender-independent relaying, freshness, expiry, revocation, duplicate lots, altered signatures, modified evidence, and reconstructing a lost receipt from calldata. The demo writes the fresh full transcript and signatures to `runtime-output/local-run.json`. Each run uses new local addresses and hashes. This is a functional test suite, not a security audit.
 
 ## Architecture
 
@@ -74,12 +76,14 @@ flowchart TD
 | scripts/agent.mjs | One-shot or directory-watching worker with durable signed-transaction journal |
 | scripts/route.mjs, scripts/ticket.mjs | Buyer and receiving-station command-line entry points |
 | artifacts/standard-input.json | All source inputs and deterministic compilation settings for verification |
-| evidence/ | A real Aevum **read** and a separate **local** settlement transcript |
+| evidence/ | Mined public pilot, compiled source comparison and a separate local rehearsal |
 | docs/PROTOCOL.md | Types, APIs, threat model, recovery behavior, platform choices and pilot roadmap |
 
 ## Evidence and submission status
 
-The build includes an Aevum chain/token read in `evidence/aevum-network.json`. It records the block, token address, decimals, and runtime hash. The official RPC also executed the contract constructor via `npm run simulate:aevum`. Its returned bytecode matched the local build byte-for-byte. The simulation is recorded in `evidence/aevum-deployment-simulation.json`. The recorded payments in `evidence/local-run.json` use chain 31337. Public contract deployment, a real Aevum payment, and explorer source-verification status still need to be added for submission. Instructions for each are in docs/AEVUM.md and docs/PITCH.md.
+The completed pilot on Aevum chain **44005** escrowed **0.10 tUSD8**, paid **0.06** and refunded **0.04**. Settlement was included in block **3,950,073**. The verifier checks the station and agent signatures, actual token transfers and the closed escrow. [Public receipt packet](evidence/aevum-pilot.json) · [funding](https://explorer-test.qday.info/tx/0xa9534597038e065c352d880b9b53c7d85879dbe177278ff1eceaca3179702099) · [settlement](https://explorer-test.qday.info/tx/0xb0dde94cdef82452a2113eae4a74871ef5e432ea528bccf8c684e7623c0030ad) · [refund](https://explorer-test.qday.info/tx/0x3f0a89e1bd8226661836f791923a0591cee3a5e9acb7f0f2ccb3a20c04822c0a).
+
+The deployed contract is `0x181BA084DCb2946EB65Cb020B85dA5e8ED44431e`. Run `npm run verify:source` to compile the published source input and check both deployment calldata and runtime bytecode against the RPC. Run `npm run audit -- evidence/aevum-pilot.json` for a fresh read of the three transactions. An explorer-issued verification badge is unconfirmed. [Runtime comparison](evidence/aevum-source-match.json) · [contract](https://explorer-test.qday.info/address/0x181BA084DCb2946EB65Cb020B85dA5e8ED44431e) · [deployment](https://explorer-test.qday.info/tx/0xb1432ef83b86d979c1f687fd3a10967c85c51d65bffd10474043e7964781f1ea).
 
 The starter app reports a Shanghai EVM target and a limit of 1,000 blocks per log query. DockCheck uses Shanghai, reads over HTTPS, and caps a browser log sync at 1,000 blocks. There are no server-side secrets or privileged contract administrator.
 
