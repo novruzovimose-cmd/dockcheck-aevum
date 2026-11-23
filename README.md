@@ -4,11 +4,7 @@
 
 The example route runs from Kutaisi to Tbilisi. The example crate prices and temperature band are fictional contract terms. Each buyer sets terms for its own cargo.
 
-Open the public receiving desk: https://dockcheck-aevum-receiving.fruitfulchina3.chatgpt.site
-
-[Watch the short demo](https://dockcheck-aevum-receiving.fruitfulchina3.chatgpt.site/DockCheck-demo.mp4) · [Download the prebuilt project](https://dockcheck-aevum-receiving.fruitfulchina3.chatgpt.site/DockCheck-Aevum.zip)
-
-Use **Run the walkthrough** for a six-step rehearsal on the compiled contract. A live Aevum settlement can be checked from its hash with **Verify an Aevum payment**, without connecting a wallet.
+Use **Run the walkthrough**, then **Inspect route audit**, to verify one complete escrow lifecycle. **Verify payment** checks one Aevum transaction. **Audit a route** reconstructs the funding, payout and refund from three hashes without connecting a wallet.
 
 ## Start here
 
@@ -53,7 +49,7 @@ npm run demo
 npm start
 ```
 
-The included test report records 28 passing tests. One integration test uses a loopback-only Aevum-shaped fixture to exercise the full CLI, including a relayer restart. Tests compile the contracts with solc-js and execute the bytecode in Ganache. Coverage includes authorization, exact transfer amounts, conservation of the route budget, sender-independent relaying, freshness, expiry, revocation, duplicate lots, altered signatures, modified evidence, and reconstructing a lost receipt from calldata. The demo writes the fresh full transcript and signatures to `runtime-output/local-run.json`. Each run uses new local addresses and hashes. This is a functional test suite, not a security audit.
+The included test report records 30 passing tests. One integration test uses a loopback-only Aevum-shaped fixture to exercise the full CLI, including a relayer restart. Tests compile the contracts with solc-js and execute the bytecode in Ganache. Coverage includes authorization, exact transfer amounts, conservation of the route budget, sender-independent relaying, freshness, expiry, revocation, duplicate lots, altered signatures, modified evidence, and reconstructing a lost receipt from calldata. The demo writes the fresh full transcript and signatures to `runtime-output/local-run.json`. Each run uses new local addresses and hashes. This is a functional test suite, not a security audit.
 
 ## Architecture
 
@@ -72,6 +68,7 @@ flowchart TD
 | --- | --- |
 | contracts/DockCheck.sol | Fixed token, escrow budgets, immutable route terms, dual EIP-712 signatures, expiry, replay prevention and refunds |
 | src/protocol.mjs | Reusable signing, simulation, settlement and network checks |
+| src/audit.mjs | Reconciles a single-payment route from three canonical transaction receipts |
 | src/verify.mjs | Independently verifies a receipt against chain data or reconstructs the signed proof from a transaction hash |
 | src/app.mjs, public/ | Responsive receiving desk, transparent transfer review, local EVM rehearsal and Aevum wallet workflow |
 | scripts/agent.mjs | One-shot or directory-watching worker with durable signed-transaction journal |
@@ -86,7 +83,7 @@ The build includes an Aevum chain/token read in `evidence/aevum-network.json`. I
 
 The starter app reports a Shanghai EVM target and a limit of 1,000 blocks per log query. DockCheck uses Shanghai, reads over HTTPS, and caps a browser log sync at 1,000 blocks. There are no server-side secrets or privileged contract administrator.
 
-Read [the ten judging questions](docs/JUDGING.md) for the rationale behind this release.
+See [ten competing project concepts and the resulting product choices](docs/JUDGE-BENCHMARK.md) and [the original judge questions](docs/JUDGING.md).
 
 ## License and sources
 

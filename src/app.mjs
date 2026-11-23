@@ -5,6 +5,7 @@ import {
   Wallet,
   ZeroAddress,
   getAddress,
+  formatEther,
   keccak256,
 } from "ethers";
 import {
@@ -16,6 +17,7 @@ import {
   localSession,
   head,
   demoTerms,
+  pilotBudget,
   randomId,
   routeId,
   fixtureLot,
@@ -29,6 +31,7 @@ import {
 } from "./protocol.mjs";
 
 import { inspectSettlement, proofFromHash } from "./verify.mjs";
+import { auditRoute, exactToken } from "./audit.mjs";
 import { runRehearsal } from "./rehearsal.mjs";
 const $ = (id) => document.getElementById(id),
   modal = $("modal");
@@ -98,6 +101,7 @@ function uiLock(value) {
     "repeat",
     "rehearse",
     "verify",
+    "audit-route",
   ]) {
     $(id).disabled =
       value || (!session && id === "review") || (id === "repeat" && !last);
@@ -374,6 +378,17 @@ function policy() {
         });
         modal.close();
         notice("Route revoked. The refund is confirmed.", "good");
+        const payments = history.filter((row) => row.proof);
+        const funding =
+          history.find((row) => row.tag === "Funded")?.hash || session.openHash;
+        if (funding && payments.length === 1) {
+          const hashes = {
+            funding,
+            settlement: payments[0].proof.transactionHash,
+            refund: rec.hash,
+          };
+          openAudit(hashes, true);
+        }
       });
     };
 }
@@ -627,6 +642,11 @@ async function connectLive() {
     chainId: 44005,
     account: await buyer.getAddress(),
   };
+  const [gas, budget] = await Promise.all([
+    provider.getBalance(connected.account),
+    token.balanceOf(connected.account),
+  ]);
+  connected.balances = { gas, budget };
   liveSetup();
 }
 function liveSetup() {
@@ -638,6 +658,9 @@ function liveSetup() {
     facts([
       ["Connected buyer", c.account],
       ["Network", "44005 · tQDAY gas"],
+      ["Test gas", formatEther(c.balances.gas) + " tQDAY"],
+      ["Test balance", exactToken(c.balances.budget) + " tUSD8"],
+      ["Pilot deposit", exactToken(pilotBudget) + " tUSD8"],
       ["Token", net.token],
     ]) +
       '<label>Existing DockCheck address<input id="desk-address" placeholder="0x…" value="' +
@@ -676,11 +699,7 @@ function routeSetup() {
     '<p class="address">Contract ' +
       esc(c.contract.target) +
       '</p><label>Carrier payout address<input id="carrier" placeholder="0x…"></label><p>The demo uses two temporary in-tab signers for the station and agent. They expire on reload. The buyer can still resume and refund. For independent operators, use the CLI with separate keys.</p>' +
-      facts([
-        ["Budget", "4.50 tUSD8"],
-        ["Rate", "0.125 tUSD8 per crate"],
-        ["Policy", "2–8 °C · 12 crates · 24 hours"],
-      ]) +
+      '<label>Route size<select id="route-size"><option value="pilot">Faucet-sized pilot · 0.10 tUSD8 · 0.01 per crate</option><option value="standard">Full rehearsal terms · 4.50 tUSD8 · 0.125 per crate</option></select></label><p>Both routes use a 2–8 °C receiving policy and expire in 24 hours.</p>' +
       button("fund", "Review route funding") +
       '<hr><label>Existing route ID<input id="resume-id" placeholder="0x… (32 bytes)" value="' +
       esc(same ? m.route || "" : "") +
@@ -698,9 +717,13 @@ function routeSetup() {
         station.address,
         agent.address,
         await head(c.provider),
+        $("route-size").value === "pilot",
       );
-    if ((await c.token.balanceOf(c.account)) < 4500000n)
-      throw Error("The buyer needs 4.50 test tUSD8 for this route.");
+    const budget = BigInt(terms.budget);
+    if ((await c.token.balanceOf(c.account)) < budget)
+      throw Error(
+        "The buyer needs " + exactToken(budget) + " test tUSD8 for this route.",
+      );
     openModal(
       "Wallet review",
       "Fund carrier escrow",
@@ -708,7 +731,7 @@ function routeSetup() {
         ["Buyer", c.account],
         ["Carrier", carrier],
         ["Spender contract", c.contract.target],
-        ["Maximum transfer", "4.50 tUSD8"],
+        ["Maximum transfer", exactToken(budget) + " tUSD8"],
         ["Expires", new Date(terms.expiry * 1000).toISOString()],
       ]) +
         '<p>Your wallet will request an exact token allowance if needed and then a separate escrow deposit. If you decline the deposit, you can clear the leftover allowance below.</p><div class="modal-actions">' +
@@ -722,8 +745,8 @@ function routeSetup() {
     });
     bind("open-route", async () => {
       const allowance = await c.token.allowance(c.account, c.contract.target);
-      if (allowance !== 4500000n)
-        await (await c.token.approve(c.contract.target, 4500000n)).wait();
+      if (allowance !== budget)
+        await (await c.token.approve(c.contract.target, budget)).wait();
       const salt = randomId();
       const rid = routeId(c.account, salt);
       const tx = await c.contract.open(salt, terms);
@@ -753,7 +776,7 @@ function routeSetup() {
         title: "Route opened on Aevum",
         detail: "Exact tUSD8 deposit confirmed.",
         hash: tx.hash,
-        amount: "4.50 tUSD8",
+        amount: exactToken(budget) + " tUSD8",
       });
       modal.close();
     });
@@ -872,7 +895,7 @@ function showVerified({ proof, terms }, live) {
           "/tx/" +
           esc(proof.transactionHash) +
           '">View on Aevum explorer</a>' +
-          button("share-proof", "Copy public proof link", "secondary") +
+          button("share-proof", "Copy verifier link", "secondary") +
           "</div>"
         : "<p>This receipt can be verified in the browser while its local chain is running.</p>"),
   );
@@ -881,7 +904,8 @@ function showVerified({ proof, terms }, live) {
       const url = new URL(location.pathname, location.origin);
       url.searchParams.set("tx", proof.transactionHash);
       await navigator.clipboard.writeText(url.href);
-      $("dialog-note").textContent = "Public proof link copied.";
+      $("dialog-note").textContent =
+        "Verifier link copied. It opens wherever this same desk address is available.";
     });
 }
 
@@ -917,6 +941,103 @@ function openVerifier(hash = "") {
 }
 
 $("verify").onclick = () => openVerifier();
+
+function showRouteAudit(packet) {
+  const live = packet.chainId === 44005;
+  const token = live ? "tUSD8" : "LOCAL";
+  const rows = [
+    ["Escrow funded", packet.fundedBaseUnits, packet.funding],
+    ["Carrier paid", packet.paidBaseUnits, packet.settlement],
+    ["Buyer refunded", packet.refundedBaseUnits, packet.refund],
+  ];
+  const movements =
+    '<ol class="audit-movements">' +
+    rows
+      .map(
+        ([label, amount, receipt]) =>
+          "<li><b>" +
+          label +
+          "</b><strong>" +
+          esc(exactToken(amount)) +
+          " " +
+          token +
+          "</strong><small>Block " +
+          esc(receipt.block) +
+          " · " +
+          (live
+            ? '<a target="_blank" rel="noreferrer" href="' +
+              net.explorer +
+              "/tx/" +
+              esc(receipt.hash) +
+              '">' +
+              esc(short(receipt.hash)) +
+              "</a>"
+            : esc(short(receipt.hash))) +
+          "</small></li>",
+      )
+      .join("") +
+    "</ol>";
+  openModal(
+    live ? "QDay Aevum · 44005" : "Local Solidity rehearsal · 31337",
+    "Route reconciled",
+    '<p class="verified-note">Three transactions verified. Funded escrow equals the carrier payout plus the buyer refund.</p>' +
+      movements +
+      facts([
+        ["Escrow remaining", "0 " + token],
+        ["Route", packet.route],
+        ["Buyer", packet.buyer],
+        ["Carrier", packet.carrier],
+      ]) +
+      '<div class="modal-actions">' +
+      button("audit-download", "Export audit packet", "secondary") +
+      "</div>",
+  );
+  $("audit-download").onclick = () =>
+    downloadJSON("dockcheck-route-" + packet.chainId + ".json", packet);
+}
+
+function openAudit(hashes = {}, useCurrentChain = false) {
+  const input = (key, label) =>
+    "<label>" +
+    label +
+    '<input name="' +
+    key +
+    '" required autocapitalize="none" spellcheck="false" pattern="0x[0-9a-fA-F]{64}" value="' +
+    esc(hashes[key] || "") +
+    '" placeholder="0x…"></label>';
+  const local = useCurrentChain && session.chainId === 31337;
+  openModal(
+    local ? "Local Solidity rehearsal · 31337" : "QDay Aevum · 44005",
+    "Audit a funded route",
+    '<p>Check the escrow deposit, carrier payout and refund against their transaction receipts. This audit covers a route with one payment.</p><form id="audit-form">' +
+      input("funding", "Funding transaction") +
+      input("settlement", "Payment transaction") +
+      input("refund", "Refund transaction") +
+      '<div class="modal-actions">' +
+      button("audit-submit", "Verify route audit") +
+      "</div></form>",
+  );
+  $("audit-form").onsubmit = (event) => {
+    event.preventDefault();
+    const values = Object.fromEntries(new FormData(event.currentTarget));
+    action(async () => {
+      const provider = local
+        ? session.provider
+        : new JsonRpcProvider(net.rpc, undefined, {
+            batchMaxCount: 1,
+            cacheTimeout: -1,
+          });
+      try {
+        if (!local && (await provider.getNetwork()).chainId !== 44005n)
+          throw Error("Aevum RPC returned an unexpected chain.");
+        showRouteAudit(await auditRoute(provider, values));
+      } finally {
+        if (!local) provider.destroy();
+      }
+    });
+  };
+}
+$("audit-route").onclick = () => openAudit();
 bind("rehearse", async () => {
   openModal(
     "Local Solidity rehearsal · 31337",
@@ -971,9 +1092,11 @@ bind("rehearse", async () => {
   $("walk-summary").insertAdjacentHTML(
     "afterend",
     '<div class="modal-actions">' +
+      button("walk-audit", "Inspect route audit") +
       button("walk-export", "Download run evidence", "secondary") +
       "</div>",
   );
+  $("walk-audit").onclick = () => showRouteAudit(result.audit);
   $("walk-export").onclick = () =>
     downloadJSON("dockcheck-local-walkthrough.json", result);
 });

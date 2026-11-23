@@ -8,8 +8,9 @@ import {
   releaseFor,
   settleSigned,
 } from "../src/protocol.mjs";
+import { auditRoute } from "../src/audit.mjs";
 import { verifyPayment, proofFromHash } from "../src/verify.mjs";
-let s, p;
+let s, p, closeHash;
 before(async () => {
   s = await localSession(ganache);
   const e = await stationTicket(s, {
@@ -47,7 +48,7 @@ test("proof with substituted station measurement fails", async () => {
   await assert.rejects(verifyPayment(s.provider, altered));
 });
 test("proof remains verifiable after the buyer revokes the route", async () => {
-  await (await s.contract.close(s.route)).wait();
+  closeHash = (await (await s.contract.close(s.route)).wait()).hash;
   assert.ok((await verifyPayment(s.provider, p)).verified);
 });
 
@@ -59,4 +60,33 @@ test("an independent reader reconstructs a lost export from transaction calldata
   );
   assert.equal(rebuilt.ticketHash, p.ticketHash);
   assert.equal(rebuilt.agentSig, p.agentSig);
+});
+
+test("closed route reconciles the mined deposit, payout and refund", async () => {
+  const report = await auditRoute(s.provider, {
+    funding: s.openHash,
+    settlement: p.transactionHash,
+    refund: closeHash,
+  });
+  assert.equal(report.fundedBaseUnits, "4500000");
+  assert.equal(report.paidBaseUnits, "750000");
+  assert.equal(report.refundedBaseUnits, "3750000");
+});
+test("a mismatched order or an invented transaction cannot yield an audit", async () => {
+  await assert.rejects(
+    auditRoute(s.provider, {
+      funding: closeHash,
+      settlement: p.transactionHash,
+      refund: s.openHash,
+    }),
+    /that order/,
+  );
+  await assert.rejects(
+    auditRoute(s.provider, {
+      funding: s.openHash,
+      settlement: p.transactionHash,
+      refund: "0x" + "00".repeat(32),
+    }),
+    /Missing successful/,
+  );
 });

@@ -9,6 +9,7 @@ import {
   settleSigned,
   stationTicket,
 } from "./protocol.mjs";
+import { auditRoute } from "./audit.mjs";
 import { proofFromHash } from "./verify.mjs";
 
 // Run the same Solidity path in the browser and in the reproducible CLI transcript.
@@ -135,14 +136,23 @@ export async function runRehearsal(engine, report = () => {}) {
     } catch (error) {
       if (policyErrorName(error, contract) !== "RouteUnavailable") throw error;
     }
-    await proofFromHash(provider, contract, proof.transactionHash);
+    const audit = await auditRoute(provider, {
+      funding: session.openHash,
+      settlement: proof.transactionHash,
+      refund: close.hash,
+    });
     log("Revoke and refund", {
       refund: money(refund) + " LOCAL",
       escrow: money(final.remaining) + " LOCAL",
       totalPaid: money(final.released) + " LOCAL",
       transactionHash: close.hash,
     });
-    return { environment: "Ephemeral local EVM, chain 31337", steps, proof };
+    return {
+      environment: "Ephemeral local EVM, chain 31337",
+      steps,
+      proof,
+      audit,
+    };
   } finally {
     await session.raw.disconnect();
   }

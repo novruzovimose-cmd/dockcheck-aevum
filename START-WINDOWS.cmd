@@ -9,7 +9,6 @@ if errorlevel 1 (
 )
 set "HOST=127.0.0.1"
 set "PORT=4173"
-echo Opening DockCheck at http://127.0.0.1:4173/
-start "" "http://127.0.0.1:4173/"
+echo Open http://127.0.0.1:4173/ in your browser once the server starts.
 node scripts\serve.mjs
 if errorlevel 1 pause

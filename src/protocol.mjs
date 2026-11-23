@@ -95,14 +95,16 @@ export async function deployDesk(signer, token) {
   await assertDesk(signer.provider, contract.target);
   return contract;
 }
-export function demoTerms(carrier, station, agent, now) {
+export const pilotBudget = 100000n;
+export const pilotRate = 10000n;
+export function demoTerms(carrier, station, agent, now, compact = false) {
   return {
     carrier,
     station,
     agent,
-    unitPrice: 125000,
-    budget: 4500000,
-    maxCrates: 12,
+    unitPrice: compact ? pilotRate : 125000,
+    budget: compact ? pilotBudget : 4500000,
+    maxCrates: compact ? 10 : 12,
     floor: 20,
     ceiling: 80,
     expiry: now + 86400,

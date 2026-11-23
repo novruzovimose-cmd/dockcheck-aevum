@@ -846,3 +846,32 @@ dialog a {
     align-items: flex-start;
   }
 }
+label select {
+  display: block;
+  width: 100%;
+  margin-top: 5px;
+  padding: 9px;
+  background: #fcfdfe;
+  color: var(--ink);
+  border: 1px solid #b6c5d1;
+  border-radius: 4px;
+  font: inherit;
+}
+.audit-movements {
+  margin: 16px 0;
+  padding: 0;
+  list-style: none;
+}
+.audit-movements li {
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--line);
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2px 8px;
+}
+.audit-movements strong {
+  font-family: var(--mono);
+}
+.audit-movements small {
+  grid-column: 1 / -1;
+}

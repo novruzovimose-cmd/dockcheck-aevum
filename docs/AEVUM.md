@@ -10,7 +10,7 @@
 | Settlement token | tUSD8 · 6 decimals · 0x456569838f1d43009A91ebA4263147Afd7233483 |
 | Contract build | solc 0.8.28+commit.7893614a, optimizer 200, Shanghai |
 
-Only use test tokens. The buyer needs enough test gas for deployment and funding and at least 4.50 tUSD8 for the sample. The separate CLI relayer needs test gas. The receiving station and scoped agent do not need gas. The official faucet is https://faucet.qday.info/. Its eligibility requirements can change. The observed public form required an eligible wallet with a qualifying Ethereum-mainnet balance. The event FAQ also lists its Discord faucet for verified members. The challenge page links to official funding channels. No real-money purchase is part of this project.
+Only use test tokens. The buyer needs enough test gas for deployment and funding and at least 0.10 tUSD8 for the faucet-sized pilot. The separate CLI relayer needs test gas. The receiving station and scoped agent do not need gas. The official faucet is https://faucet.qday.info/. Its eligibility requirements can change. The observed public form required an eligible wallet with a qualifying Ethereum-mainnet balance. The event FAQ also lists its Discord faucet for verified members. The challenge page links to official funding channels. No real-money purchase is part of this project.
 
 Run `npm run simulate:aevum` to execute the constructor on the official RPC at its latest block and compare the returned runtime to the build. This read-only call requires no tokens and creates no contract address.
 
@@ -18,10 +18,35 @@ Run `npm run simulate:aevum` to execute the constructor on the official RPC at i
 
 1. Start the prebuilt desk. Open the **Local rehearsal** network menu. **Check live network** reads chain ID, token decimals, runtime hash and the latest block without connecting a wallet.
 2. Choose **Connect to Aevum** and approve the wallet's network switch. Confirm chain 44005. **Deploy new contract** deploys DockCheck with the official token address. Keep the deployment hash from your wallet. Alternatively enter an existing address. The client requires a complete runtime-bytecode match and the official token.
-3. Enter a test carrier address you control for the presentation. The browser generates distinct, temporary station and agent signing keys for this demo. Choose **Review route funding** and verify the payee, budget, expiry and spender. Approve the exact 4.50 tUSD8 allowance and separate deposit. Declining the deposit leaves the allowance available until used or cleared. The funding review provides a **Clear allowance** action.
+3. Enter a test carrier address you control for the presentation. The browser generates distinct, temporary station and agent signing keys for this demo. Choose **Review route funding** and verify the payee, budget, expiry and spender. Choose the 0.10 tUSD8 pilot and approve the exact allowance and separate deposit. The full rehearsal terms are also available. Declining the deposit leaves the allowance available until used or cleared. The funding review provides a **Clear allowance** action.
 4. Open **Route policy** and copy the route ID and contract. The valid receipt and rejection steps match the local walkthrough. The buyer wallet relays the settlement in this browser demonstration and pays test gas.
 5. **Export evidence** after the first settlement. Open the linked explorer transaction and verify the tUSD8 Transfer recipient and amount. **Sync recent blocks** reconstructs externally submitted settlements for this route within the latest 1,000 blocks. For older transfers run the by-hash command below.
 6. Revoke the route before the presentation ends and retain the refund hash. A reload discards the two temporary signing keys. The buyer can still use **Use existing** and **Resume existing route** to read balances and reclaim escrow. New settlements on that browser-demo route require its original signatures. Open a new route for a fresh rehearsal.
+
+## One-command public pilot
+
+This can run from localhost. First check an Aevum address without exposing a signing key:
+
+```sh
+npm run mine -- check 0xYOUR_PUBLIC_ADDRESS
+```
+
+The official QDay challenge page links to its Discord. Verified members can use `/faucet` in `#faucet` with their **public testnet address**. Confirm the result using the check command. The browser wallet flow above works without an exported private key.
+
+For the CLI pilot, use a dedicated test-only signer in the local `.env` file as BUYER_KEY. From the source directory:
+
+```sh
+npm ci
+npm run mine -- send
+```
+
+This sends five Aevum transactions: deployment, exact approval, funding, payment, and closing. The route starts with 0.10 tUSD8. Six accepted crates pay 0.06 tUSD8. Closing returns 0.04 tUSD8. The CLI writes each signed transaction before sending it and recovers completed stages on rerun. If a stage is pending, rerun using the same directory and signer. Keep the `.dockcheck/` directory private because it holds disposable test signing material. The resulting `verified-pilot.json` contains only public receipt evidence.
+
+```sh
+npm run audit -- /path/to/verified-pilot.json
+```
+
+Open **Audit a route** in the app and enter the packet's funding, settlement, and refund hashes for an independent check. The verifier checks receipts and actual token transfers against one contract, route, carrier, and buyer. It rejects out-of-order, unrelated, and incomplete transactions.
 
 ## Separated actors and an unattended agent
 

@@ -111,6 +111,24 @@ test(
       await assert.rejects(call("agent", "warm.signed.json"), /temperature/i);
       assert.equal(JSON.parse(await call("route", "close")).refund, "3750000");
       assert.equal(JSON.parse(await call("route", "status")).closed, true);
+      const before = JSON.parse(await call("mine-aevum", "check", buyer));
+      assert.equal(before.sufficientTokens, true);
+      const mined = JSON.parse(await call("mine-aevum", "send"));
+      assert.equal(mined.fundedBaseUnits, "100000");
+      assert.equal(mined.paidBaseUnits, "60000");
+      assert.equal(mined.refundedBaseUnits, "40000");
+      const retry = JSON.parse(await call("mine-aevum", "send"));
+      assert.equal(retry.deployment.hash, mined.deployment.hash);
+      assert.equal(retry.settlement.hash, mined.settlement.hash);
+      const checked = JSON.parse(
+        await call(
+          "audit",
+          mined.funding.hash,
+          mined.settlement.hash,
+          mined.refund.hash,
+        ),
+      );
+      assert.equal(checked.route, mined.route);
     } finally {
       await server.close();
       await fs.rm(tmp, { recursive: true, force: true });
