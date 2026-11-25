@@ -90,3 +90,36 @@ test("a mismatched order or an invented transaction cannot yield an audit", asyn
     /Missing successful/,
   );
 });
+
+test("accounting verifies the attachment against the specific paid lot; repeated imports retain their ID", async () => {
+  const { reconcilePayable } = await import("../src/payable.mjs");
+  const { attestException } = await import("../src/disposition.mjs");
+  const signed = await attestException(s.station,p.envelope,{delivered:8,reason:"Packaging damage"});
+  const result = await reconcilePayable(s.provider,p.transactionHash,signed);
+  const bare = await reconcilePayable(s.provider,p.transactionHash);
+  assert.equal(result.entryId,bare.entryId);
+  assert.equal(bare.inspection,null);
+  assert.equal(result.inspection.held,2);
+  const other = await stationTicket(s,{lot:randomId(),crates:6,low:24,high:67});
+  const otherRecord = await attestException(s.station,other,{delivered:8,reason:"Packaging damage"});
+  await assert.rejects(reconcilePayable(s.provider,p.transactionHash,otherRecord),/different payment/);
+});
+test("multi-lot closeout accepts unordered receipts and rejects omitted or repeated payouts", async () => {
+  const route = await localSession(ganache);
+  try {
+    const hashes = [];
+    for (const crates of [2,3]) {
+      const e = await stationTicket(route,{lot:randomId(),crates,low:24,high:67});
+      const release = await releaseFor(route.contract,31337,e,route.agent);
+      hashes.push((await settleSigned(route.contract,e,release)).transactionHash);
+    }
+    const refund = (await (await route.contract.close(route.route)).wait()).hash;
+    const check = settlements => auditRoute(route.provider,{funding:route.openHash,settlements,refund});
+    const audit = await check([...hashes].reverse());
+    assert.equal(audit.paidBaseUnits,"625000");
+    assert.equal(audit.refundedBaseUnits,"3875000");
+    assert.equal(audit.payments.length,2);
+    await assert.rejects(check(hashes.slice(0,1)),/reconcile/);
+    await assert.rejects(check([hashes[0],hashes[0]]),/distinct/);
+  } finally { await route.raw.disconnect(); }
+});

@@ -1,4 +1,6 @@
-# DockCheck 1.3.0
+# DockCheck 1.4.0
+
+The accounting verifier links a signed receiving exception to its exact mined payment. A reference SQLite importer supports duplicate handling, later attachment of inspection evidence, and conflict review. The browser desk and CLI also reconcile multiple payouts on a closed route. Accepted quantity and the token transfer remain independently verifiable when a station attachment is unavailable.
 
 Receiving clerks can record delivered and accepted quantities separately. Partial receipts include a second EIP-712 signature binding the delivered count and exception reason to the payment ticket. The agent checks an attached exception before relay. Only accepted crates are payable. A settled lot is final. Held crates cannot be settled later under the same lot identifier.
 

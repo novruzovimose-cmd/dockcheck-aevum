@@ -20,3 +20,11 @@ The organizer puts 20 points on originality and 15 each on presentation, integra
 Publish one actual Aevum settlement, share its hash through the verifier, and link the contract address and verification evidence. This is the eligible demo path. Capture the operator's actual result and the funding, settlement and refund receipts. A conversation with one receiving or freight operator is a stronger test of the workflow than adding another unrelated feature.
 
 Organizer rubric: https://qday.io/builder-challenge
+
+## Who would use this first?
+
+A produce distributor with a receiving clerk and a separate freight-payables operator is the proposed pilot customer. GS1’s EANCOM receiving-advice examples already distinguish accepted quantities and damage-related variances. That supports the choice of workflow. DockCheck currently works at the lot level and exports its own JSON. A production EDI connector would still need item identifiers, order-line mapping and the receiving partner’s conventions. [GS1 receiving advice, section 6](https://www.gs1.org/sites/default/files/docs/eancom/s3/recadv.pdf)
+
+Start a shadow trial using historical, de-identified delivery slips. Ask a clerk to record accepted quantities without coaching, then ask payables to match each result to its bill. Record time to a match, mistaken approvals, how often the same slip is imported twice, and how often held goods are later accepted. Compare with the existing process on the same slips. Stop the pilot if a partial receipt causes the carrier to be booked twice or if a later release is required under the same lot. The release currently treats each settled lot as final.
+
+The commercial hypothesis is a per-site integration and support fee for distributors. The first distribution experiment would be an introduction through a warehouse software integrator. Willingness to pay, costs and operator adoption remain unmeasured.

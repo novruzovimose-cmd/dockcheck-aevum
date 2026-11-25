@@ -25,6 +25,13 @@ with sync_playwright() as runtime:
         expect(page.locator("#walk-export")).to_be_visible(timeout=120000)
         expect(page.locator("#walkthrough")).to_contain_text("6 accepted of 8")
         expect(page.locator("#walk-summary")).to_contain_text("3.75 returned")
+        page.locator("#walk-payable").click()
+        expect(page.locator("dialog")).to_contain_text("Packaging damage")
+        with page.expect_download() as download:
+            page.locator("#save-payable").click()
+        import json
+        booking = json.loads(download.value.path().read_text())
+        assert booking["inspection"]["held"] == 2 and booking["amountBaseUnits"] == "750000"
         assert not errors, errors
         print(f"{width}px: reviewed partial intake, held full load, completed local settlement", flush=True)
         page.close()

@@ -64,6 +64,18 @@
           />
         </div>
       </section>
+      <section class="case-strip" aria-labelledby="case-title">
+        <div>
+          <p class="over">Receiving scenario · local walkthrough</p>
+          <h2 id="case-title">Eight crates arrive. Two have damaged packaging.</h2>
+          <div class="crate-counts"><div><strong>8</strong>Delivered</div><div><strong>6</strong>Accepted</div><div><strong>2</strong>Held</div></div><p id="pilot-summary">
+            Try the partial delivery locally. Inspect what the station signs, what the carrier earns, and what stays in escrow. The mined receipt opens a separate Aevum payment.
+          </p>
+        </div>
+        <div class="case-actions">
+          <button class="primary" id="rehearse">Try a partial delivery</button><button class="quiet" id="pilot">Open recorded Aevum receipt</button>
+        </div>
+      </section>
       <div
         id="route-balances"
         hidden
@@ -117,18 +129,6 @@
         <div class="policy-fields"><label>Shipment lot reference<input required maxlength="80" name="reference"></label><label>Delivered crates<input required type="number" min="1" max="4294967295" step="1" name="delivered"></label><label>Accepted crates<input required type="number" min="0" step="1" name="crates"></label>
         <label>Lowest temperature (°C)<input required type="number" step="0.1" name="low"></label><label>Highest temperature (°C)<input required type="number" step="0.1" name="high"></label></div>
         <label id="hold-label" hidden>Reason for held crates<select name="reason"><option value="">Choose a reason</option><option>Packaging damage</option><option>Missing seal</option><option>Quality inspection</option></select></label><output id="count-summary" aria-live="polite"></output><label>Observation time on this device<input required name="time" type="datetime-local" step="1"></label><button class="primary">Review station ticket</button></form></details>
-      <section class="case-strip" aria-labelledby="case-title">
-        <div>
-          <p class="over">Receiving scenario · local walkthrough</p>
-          <h2 id="case-title">Eight crates arrive. Two have damaged packaging.</h2>
-          <div class="crate-counts"><div><strong>8</strong>Delivered</div><div><strong>6</strong>Accepted</div><div><strong>2</strong>Held</div></div><p id="pilot-summary">
-            Try the partial delivery locally. Inspect what the station signs, what the carrier earns, and what stays in escrow. The mined receipt opens a separate Aevum payment.
-          </p>
-        </div>
-        <div class="case-actions">
-          <button class="primary" id="rehearse">Try a partial delivery</button><button class="quiet" id="pilot">View Aevum receipt</button>
-        </div>
-      </section>
       <div id="station-tools" hidden class="columns">
         <section class="card ticket">
           <div class="section-head">

@@ -39,40 +39,36 @@ function comesBefore(a, b) {
   );
 }
 
-// A complete audit certifies one paid lot and the return of the unused budget.
-export async function auditRoute(provider, { funding, settlement, refund }) {
-  const hashes = [funding, settlement, refund];
-  if (
-    !hashes.every(isHash) ||
-    new Set(hashes.map((h) => h.toLowerCase())).size !== 3
-  )
-    throw Error("Enter three distinct 32-byte transaction hashes.");
-  const [opened, paid, closed] = await Promise.all(
-    hashes.map((hash) => canonicalReceipt(provider, hash)),
-  );
+// Every accepted lot contributes a positive payout, so a missing lot fails the final balance check.
+export async function auditRoute(provider, { funding, settlement, settlements, refund }) {
+  const payments = settlements ?? [settlement];
+  if (!Array.isArray(payments) || !payments.length) throw Error("Enter at least one payment hash.");
+  const hashes = [funding, ...payments, refund];
+  if (!hashes.every(isHash) || new Set(hashes.map(h => h.toLowerCase())).size !== hashes.length)
+    throw Error("Enter distinct 32-byte transaction hashes.");
+  const [opened, closed] = await Promise.all([funding, refund].map(hash => canonicalReceipt(provider,hash)));
   const desk = await assertDesk(provider, opened.to);
-  if ([paid, closed].some((r) => getAddress(r.to) !== desk.target))
-    throw Error("The transactions target different contracts.");
-  if (!comesBefore(opened, paid) || !comesBefore(paid, closed))
-    throw Error("Expected funding, settlement and refund in that order.");
+  if (!comesBefore(opened, closed)) throw Error("Expected funding, settlement and refund in that order.");
+  if (getAddress(closed.to) !== desk.target) throw Error("Different refund contract.");
   const open = parseEvent(opened, desk, "Opened");
   const close = parseEvent(closed, desk, "Closed");
-  const proof = await proofFromHash(provider, desk, settlement);
-  if (
-    open.route !== proof.route ||
-    open.route !== close.route ||
-    open.owner !== close.owner ||
-    open.carrier !== proof.carrier
-  )
-    throw Error(
-      "The three receipts do not describe the same route and parties.",
-    );
-
+  if (open.route !== close.route || open.owner !== close.owner) throw Error("Refund belongs to another route.");
+  const proofs = [];
+  const receipts = [];
+  for (const hash of payments) {
+    const paid = await canonicalReceipt(provider,hash);
+    if (!comesBefore(opened,paid) || !comesBefore(paid,closed)) throw Error("Expected funding, settlement and refund in that order.");
+    const proof = await proofFromHash(provider,desk,hash);
+    if (open.route !== proof.route || open.carrier !== proof.carrier) throw Error("Payment belongs to another route.");
+    proofs.push(proof);
+    receipts.push(paid);
+  }
+  const [proof] = proofs;
   const [route, token] = await Promise.all([
     desk.routeOf(open.route),
     desk.token(),
   ]);
-  const payout = BigInt(proof.amountBaseUnits);
+  const payout = proofs.reduce((sum,p) => sum + BigInt(p.amountBaseUnits), 0n);
   if (
     !route.closed ||
     route.owner !== open.owner ||
@@ -81,7 +77,7 @@ export async function auditRoute(provider, { funding, settlement, refund }) {
     route.released !== payout ||
     close.returnedAmount + payout !== open.budget
   )
-    throw Error("The route does not reconcile to one payout and its refund.");
+    throw Error("The route does not reconcile to the supplied payments and refund.");
   if (
     !hasTransfer(opened, token, open.owner, desk.target, open.budget) ||
     (close.returnedAmount > 0n &&
@@ -122,8 +118,8 @@ export async function auditRoute(provider, { funding, settlement, refund }) {
       expiry: Number(route.terms.expiry),
     },
     funding: evidence(opened),
-    settlement: evidence(paid),
+    ...(proofs.length === 1 ? {settlement: evidence(receipts[0]), proof} : {}),
+    payments: proofs.map((item,i) => ({receipt:evidence(receipts[i]),proof:item})),
     refund: evidence(closed),
-    proof,
   };
 }

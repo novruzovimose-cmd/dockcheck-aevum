@@ -12,12 +12,12 @@ async function run() {
     hashes = Object.fromEntries(
       ["funding", "settlement", "refund"].map((k) => [k, packet[k]?.hash]),
     );
-  } else if (args.length === 3) {
-    const [funding, settlement, refund] = args;
-    hashes = { funding, settlement, refund };
+    if (packet.payments) hashes.settlements = packet.payments.map(p => p.receipt.hash);
+  } else if (args.length >= 3) {
+    hashes = { funding: args[0], settlements: args.slice(1,-1), refund: args.at(-1) };
   } else {
     throw Error(
-      "Usage: npm run audit -- packet.json OR FUNDING_TX PAYMENT_TX REFUND_TX",
+      "Usage: npm run audit -- packet.json OR FUNDING_TX PAYMENT_TX [PAYMENT_TX ...] REFUND_TX",
     );
   }
   const { provider } = await live();

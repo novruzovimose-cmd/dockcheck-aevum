@@ -1,5 +1,17 @@
 # DockCheck
 
+**Verify the public carrier payment and import it into a local ledger** (Node 22 and Python 3). After `npm ci`, run these commands from the repository root. They read Aevum without a wallet. Repeating the import produces `already posted`.
+
+```sh
+node examples/book-payment.mjs 0xb0dde94cdef82452a2113eae4a74871ef5e432ea528bccf8c684e7623c0030ad > entry.json
+python examples/payables-ledger.py freight.sqlite entry.json
+```
+
+An optional second argument to the Node command accepts a station-signed exception ticket. The verifier matches it to the exact payment digest. On the earlier public receipt the exception is unknown. For a signed eight-crate example, open **Try a partial delivery → Inspect signed exception → Download accounting entry**. The SQLite example accepts trusted output from the verifier; verify files from other parties before import. A later matching inspection can enrich an existing entry without a second posting. Conflicting evidence stops the import for review.
+
+**Close a multi-delivery route** with `npm run audit -- FUNDING_TX PAYMENT_1 PAYMENT_2 REFUND_TX`. Supply every payment in any order. The verifier checks each transfer, both signers and the final escrow balance. The browser audit accepts one payment hash per line.
+
+
 **Partial delivery workflow.** Eight crates arrive and two have damaged packaging. Open **Try a partial delivery** to follow the signed inspection, payment for six crates, duplicate-payment check and refund on a local EVM. For a live route, the receiving form creates an agent-compatible payment ticket with an attached signed exception. Verify that attachment offline with `npm run exception -- ticket.json ASSIGNED_STATION_ADDRESS` using the station address from the buyer’s route. The exception is off-chain and optional. Removing the attachment leaves the signed payment quantity intact and removes the evidence of why other crates were held. A paid lot is final.
 
 

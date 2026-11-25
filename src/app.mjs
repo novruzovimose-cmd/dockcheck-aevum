@@ -1,3 +1,4 @@
+import { reconcilePayable } from "./payable.mjs";
 import { attestException, reconcileCounts } from "./disposition.mjs";
 import { signDelivery } from "./receiving.mjs";
 import pilot from "../evidence/aevum-pilot.json" with { type: "json" };
@@ -976,6 +977,28 @@ function showVerified({ proof, terms }, live) {
   );
   $("proof-invoice").onclick = () =>
     showInvoice(proof, live ? "Verified on Aevum" : "Verified on local chain");
+  if (live) {
+    $("modal-body").insertAdjacentHTML("beforeend",
+      '<form id="book-payment"><label>Signed exception ticket (optional)<input name="ticket" type="file" accept=".json,application/json"></label>' +
+      '<button class="secondary">Verify accounting entry</button></form>');
+    $("book-payment").onsubmit = event => {
+      event.preventDefault();
+      const file = event.currentTarget.elements.ticket.files[0];
+      action(async () => {
+        let record;
+        if (file) {
+          if (file.size > 65536) throw Error("Choose a signed ticket smaller than 64 KiB.");
+          try { record = JSON.parse(await file.text()); }
+          catch { throw Error("Choose a valid signed JSON ticket."); }
+        }
+        const rpc = new JsonRpcProvider(net.rpc, undefined, {batchMaxCount:1});
+        try {
+          if ((await rpc.getNetwork()).chainId !== 44005n) throw Error("Select Aevum testnet.");
+          showPayable(await reconcilePayable(rpc,proof.transactionHash,record));
+        } finally { rpc.destroy(); }
+      });
+    };
+  }
   if (live)
     bind("share-proof", async () => {
       const url = new URL(location.pathname, location.origin);
@@ -984,6 +1007,17 @@ function showVerified({ proof, terms }, live) {
       $("dialog-note").textContent =
         "Verifier link copied. It opens wherever this same desk address is available.";
     });
+}
+
+function showPayable(entry) {
+  const currency = entry.chainId === 44005 ? "tUSD8" : "LOCAL";
+  openModal("Accounts payable", "Verified accounting entry",
+    facts([["Carrier",entry.carrier],["Paid",exactToken(entry.amountBaseUnits)+" "+currency],
+      ["Accepted crates",entry.accepted],["Held crates",entry.inspection?.held ?? "Unknown · no signed exception supplied"],
+      ["Station’s reason",entry.inspection?.reason ?? "Unavailable"],["Transaction",entry.transactionHash]]) +
+    "<p>Use the same entry ID on every import to avoid booking a payment twice.</p>" +
+    button("save-payable","Download accounting entry"));
+  $("save-payable").onclick = () => downloadJSON("dockcheck-payable.json",entry);
 }
 
 async function verifyOnAevum(hash) {
@@ -1025,9 +1059,10 @@ $("verify").onclick = () => openVerifier();
 function showRouteAudit(packet, saved = false) {
   const live = packet.chainId === 44005;
   const token = live ? "tUSD8" : "LOCAL";
+  const payments = packet.payments ?? [{receipt:packet.settlement,proof:packet.proof}];
   const rows = [
     ["Escrow funded", packet.fundedBaseUnits, packet.funding],
-    ["Carrier paid", packet.paidBaseUnits, packet.settlement],
+    ...payments.map(({proof,receipt}) => ["Carrier paid",proof.amountBaseUnits,receipt]),
     ["Buyer refunded", packet.refundedBaseUnits, packet.refund],
   ];
   const movements =
@@ -1063,7 +1098,7 @@ function showRouteAudit(packet, saved = false) {
     '<p class="verified-note">' +
       (saved
         ? "Saved from a completed Aevum run. Recheck these three transactions against the public chain at any time."
-        : "Three transactions verified. Funded escrow equals the carrier payout plus the buyer refund.") +
+        : "Funded escrow equals all verified carrier payments plus the buyer refund.") +
       "</p>" +
       movements +
       facts([
@@ -1073,18 +1108,20 @@ function showRouteAudit(packet, saved = false) {
         ["Carrier", packet.carrier],
       ]) +
       '<div class="modal-actions">' +
-      button("audit-invoice", "Check carrier invoice") +
-      (saved ? button("audit-live", "Recheck on Aevum", "secondary") : "") +
+      payments.map((_,i) => button("audit-invoice-"+i, payments.length === 1 ? "Check carrier invoice" : "Check invoice for payment "+(i+1))).join("") +
+      (saved ? button("audit-live", "Recheck on Aevum", "secondary") + button("pilot-booking","Verify carrier payment on Aevum","secondary") : "") +
       button("audit-download", "Export audit packet", "secondary") +
       "</div>",
   );
-  $("audit-invoice").onclick = () =>
-    showInvoice(
-      packet.proof,
+  payments.forEach(({proof,receipt},i) => {
+    $("audit-invoice-"+i).onclick = () => showInvoice(proof,
       saved ? recorded : live ? "Verified on Aevum" : "Verified on local chain",
-      packet.settlement.hash === pilot.settlement.hash,
-    );
-  if (saved) $("audit-live").onclick = () => openAudit(pilotHashes);
+      receipt.hash === pilot.settlement.hash);
+  });
+  if (saved) {
+    $("audit-live").onclick = () => openAudit(pilotHashes);
+    bind("pilot-booking", () => verifyOnAevum(packet.settlement.hash));
+  }
   $("audit-download").onclick = () =>
     downloadJSON("dockcheck-route-" + packet.chainId + ".json", packet);
 }
@@ -1102,9 +1139,9 @@ function openAudit(hashes = {}, useCurrentChain = false) {
   openModal(
     local ? "Local Solidity rehearsal · 31337" : "QDay Aevum · 44005",
     "Audit a funded route",
-    '<p>Check the escrow deposit, carrier payout and refund against their transaction receipts. This audit covers a route with one payment.</p><form id="audit-form">' +
+    '<p>Check the escrow deposit, carrier payout and refund against their transaction receipts. Include every payment on the route.</p><form id="audit-form">' +
       input("funding", "Funding transaction") +
-      input("settlement", "Payment transaction") +
+      '<label>Payment transactions (one hash per line)<textarea required name="settlement" rows="3">' + esc(hashes.settlement ?? "") + '</textarea></label>'  +
       input("refund", "Refund transaction") +
       '<div class="modal-actions">' +
       button("audit-submit", "Verify route audit") +
@@ -1123,7 +1160,7 @@ function openAudit(hashes = {}, useCurrentChain = false) {
       try {
         if (!local && (await provider.getNetwork()).chainId !== 44005n)
           throw Error("Aevum RPC returned an unexpected chain.");
-        showRouteAudit(await auditRoute(provider, values));
+        showRouteAudit(await auditRoute(provider, {...values,settlements:values.settlement.trim().split(/\s+/)}));
       } finally {
         if (!local) provider.destroy();
       }
@@ -1185,10 +1222,11 @@ bind("rehearse", async () => {
   $("walk-summary").insertAdjacentHTML(
     "afterend",
     '<div class="modal-actions">' +
-      button("walk-audit", "Inspect route audit") +
+      button("walk-payable", "Inspect signed exception") + button("walk-audit", "Inspect route audit") +
       button("walk-export", "Download run evidence", "secondary") +
       "</div>",
   );
+  $("walk-payable").onclick = () => showPayable(result.payable);
   $("walk-audit").onclick = () => showRouteAudit(result.audit);
   $("walk-export").onclick = () =>
     downloadJSON("dockcheck-local-walkthrough.json", result);

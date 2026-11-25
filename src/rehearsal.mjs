@@ -1,3 +1,4 @@
+import { reconcilePayable } from "./payable.mjs";
 import {
   describeError,
   fixtureLot,
@@ -155,6 +156,7 @@ export async function runRehearsal(engine, report = () => {}) {
       environment: "Ephemeral local EVM, chain 31337",
       steps,
       stationRecord,
+      payable: await reconcilePayable(provider,proof.transactionHash,stationRecord),
       proof,
       audit,
     };
