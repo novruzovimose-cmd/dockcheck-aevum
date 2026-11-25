@@ -1,3 +1,4 @@
+import { verifyException } from "../src/disposition.mjs";
 import fs from "node:fs";
 import path from "node:path";
 import { TypedDataEncoder, getAddress, keccak256 } from "ethers";
@@ -48,6 +49,7 @@ async function run() {
       !/^0x[\da-f]{64}$/i.test(lot)
     )
       throw Error("Input is outside this worker's chain, contract, or route.");
+    if ("exception" in e) verifyException(e, r.terms.station);
     const prefix = path.join(root, lot.toLowerCase()),
       journal = prefix + ".pending.json",
       output = prefix + ".proof.json";

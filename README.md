@@ -1,5 +1,8 @@
 # DockCheck
 
+**Partial delivery workflow.** Eight crates arrive and two have damaged packaging. Open **Try a partial delivery** to follow the signed inspection, payment for six crates, duplicate-payment check and refund on a local EVM. For a live route, the receiving form creates an agent-compatible payment ticket with an attached signed exception. Verify that attachment offline with `npm run exception -- ticket.json ASSIGNED_STATION_ADDRESS` using the station address from the buyer’s route. The exception is off-chain and optional. Removing the attachment leaves the signed payment quantity intact and removes the evidence of why other crates were held. A paid lot is final.
+
+
 Receiving stations can open **Receive a delivery and sign a ticket**, enter their route and actual measurements, review the ticket, sign with their assigned wallet, and download agent-compatible JSON. The agent consumes it with `npm run agent -- ticket.json`. Use the same physical lot reference on every retry. A full 32-byte lot ID is preserved for CLI interoperability. Other references are uppercased and hashed. The station attests to the measurements.
 
 **Pay the carrier for the crates the receiving dock actually accepts.** A produce buyer funds a route in tUSD8. A receiving station signs the lot, accepted quantity and measured temperature range. A scoped agent checks the receipt and co-signs a fixed-rate payout to the carrier. The buyer can revoke the route and reclaim its unspent budget.

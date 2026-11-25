@@ -114,20 +114,19 @@
       <details class="card" style="margin-top:18px"><summary><strong>Receive a delivery and sign a ticket</strong></summary>
         <form id="station-form"><p>Use your assigned Aevum station wallet and the lot reference on the shipment. Enter the time the goods were measured.</p>
         <label>Escrow contract<input id="station-contract" name="contract" required></label><label>Route ID from buyer<input required name="route" pattern="0x[0-9a-fA-F]{64}"></label>
-        <div class="policy-fields"><label>Shipment lot reference<input required maxlength="80" name="reference"></label><label>Accepted crates<input required type="number" min="1" step="1" name="crates"></label>
+        <div class="policy-fields"><label>Shipment lot reference<input required maxlength="80" name="reference"></label><label>Delivered crates<input required type="number" min="1" max="4294967295" step="1" name="delivered"></label><label>Accepted crates<input required type="number" min="0" step="1" name="crates"></label>
         <label>Lowest temperature (°C)<input required type="number" step="0.1" name="low"></label><label>Highest temperature (°C)<input required type="number" step="0.1" name="high"></label></div>
-        <label>Observation time on this device<input required name="time" type="datetime-local" step="1"></label><button class="primary">Review station ticket</button></form></details>
+        <label id="hold-label" hidden>Reason for held crates<select name="reason"><option value="">Choose a reason</option><option>Packaging damage</option><option>Missing seal</option><option>Quality inspection</option></select></label><output id="count-summary" aria-live="polite"></output><label>Observation time on this device<input required name="time" type="datetime-local" step="1"></label><button class="primary">Review station ticket</button></form></details>
       <section class="case-strip" aria-labelledby="case-title">
         <div>
-          <p class="over">Aevum testnet receipt</p>
-          <h2 id="case-title">Six crates received. One carrier payment.</h2>
-          <p id="pilot-summary">
-            Open the recorded testnet receipt to inspect the carrier payment.
+          <p class="over">Receiving scenario · local walkthrough</p>
+          <h2 id="case-title">Eight crates arrive. Two have damaged packaging.</h2>
+          <div class="crate-counts"><div><strong>8</strong>Delivered</div><div><strong>6</strong>Accepted</div><div><strong>2</strong>Held</div></div><p id="pilot-summary">
+            Try the partial delivery locally. Inspect what the station signs, what the carrier earns, and what stays in escrow. The mined receipt opens a separate Aevum payment.
           </p>
         </div>
         <div class="case-actions">
-          <button class="primary" id="pilot">View mined receipt</button
-          ><button class="quiet" id="rehearse">Run local walkthrough</button>
+          <button class="primary" id="rehearse">Try a partial delivery</button><button class="quiet" id="pilot">View Aevum receipt</button>
         </div>
       </section>
       <div id="station-tools" hidden class="columns">

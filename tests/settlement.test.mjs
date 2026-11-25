@@ -288,3 +288,23 @@ test("receiving desk ticket settles through the agent and a repeated physical lo
   assert.equal(proof.amountBaseUnits,"750000");
   await assert.rejects(signDelivery(s,{...fields,reference:"dock-127"}),/already been paid/);
 });
+
+isolated("partial receipt authenticates the exception, settles only accepted crates and detects edits", async () => {
+  const { attestException, verifyException, reconcileCounts } = await import("../src/disposition.mjs");
+  const e = await ticket();
+  const mixed = await attestException(s.station, e, { delivered: 8, reason: "Packaging damage" });
+  assert.deepEqual(verifyException(JSON.parse(JSON.stringify(mixed)), s.station.address),
+    { delivered: 8, accepted: 6, held: 2, reason: "Packaging damage" });
+  for (const edit of [{ delivered: 9 }, { reason: "Missing seal" }]) {
+    assert.throws(() => verifyException({ ...mixed, exception: { ...mixed.exception, ...edit } }, s.station.address));
+  }
+  assert.throws(() => verifyException({ ...mixed, ticket: { ...e.ticket, crates: 7 } }, s.station.address));
+  assert.throws(() => verifyException(mixed, s.agent.address));
+  assert.throws(() => reconcileCounts(3, 4, ""));
+  assert.throws(() => reconcileCounts(8, 6, ""));
+  assert.equal(await attestException(s.station,e,{delivered:6}),e);
+  const before = await s.token.balanceOf(s.carrier);
+  const release = await releaseFor(s.contract,s.chainId,mixed,s.agent);
+  await settleSigned(s.contract,mixed,release);
+  assert.equal(await s.token.balanceOf(s.carrier)-before,6n * BigInt(s.terms.unitPrice));
+});

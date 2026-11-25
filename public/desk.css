@@ -1233,3 +1233,10 @@ dialog {
     grid-template-columns: 1fr;
   }
 }
+.crate-counts {display:flex; gap:1rem; flex-wrap:wrap; margin:1rem 0}
+.crate-counts div {display:grid; padding:.45rem .8rem; border-left:3px solid #8698ac; font-weight:600}
+.crate-counts strong {font:700 1.65rem var(--sans)}
+.crate-counts div:nth-child(2) {border-color:#1b8565}
+.crate-counts div:last-child {border-color:#b57514}
+#station-form output {display:block; font-weight:600; margin:.75rem 0}
+#station-form select {font:inherit; padding:.6rem; max-width:100%}

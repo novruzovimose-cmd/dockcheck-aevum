@@ -25,6 +25,7 @@ export async function signDelivery({provider, contract, route, station, chainId}
     throw Error("Use the actual observation time, within the last hour and after route opening.");
   if (BigInt(crates)*state.terms.unitPrice > state.remaining) throw Error("Escrow is insufficient for this ticket.");
   const ticket = {route,lot,crates,low,high,observedAt};
+  await contract.quote(ticket);
   const scope = domain(chainId,contract.target);
   const stationSig = await station.signTypedData(scope,ticketTypes,ticket);
   if (verifyTypedData(scope,ticketTypes,ticket,stationSig) !== state.terms.station) throw Error("The signature differs from the assigned station.");

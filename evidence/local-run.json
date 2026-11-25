@@ -4,12 +4,12 @@
     {
       "step": "Fund route",
       "chainId": 31337,
-      "contract": "0x7015DC5b9315d8B9eEEB4929354182B7732a64A5",
-      "owner": "0x63694ae6cC644ccBE223279A359C4fb6ec960Af5",
-      "carrier": "0x49f6900A14d2AdC0DdBd669463c2D8beaf72C092",
-      "station": "0xA0e2062C9EC5808267e7Ea048e9121e3F23fe47c",
-      "agent": "0x9AF71cd9904d88eB976b8e5711171C36A3418604",
-      "openTx": "0xc78b6cc03511a9b4acdf9f8fca6319fc4cb792101b5d8a052a9089eada31c155",
+      "contract": "0xcAC040A0146e849B77271A35E24F6E23C0c5D485",
+      "owner": "0x784B841E361a5A4Be587721876D61466d85Ea5bc",
+      "carrier": "0xd5588E18943a7B86672De971331E8742422A88D6",
+      "station": "0x976f540834030E56Be5a87e4AA0BB758Ce27D81C",
+      "agent": "0xc181B06639748FC4A6868657bAA7D1Fb7006d439",
+      "openTx": "0x105403a39197152e3f78292f10c093e014e81d522fd6ad7e07c001505b7da05f",
       "budget": "4.50 LOCAL",
       "rate": "0.125 LOCAL",
       "temperature": "2.0 to 8.0 C",
@@ -17,21 +17,25 @@
     },
     {
       "step": "Review signed receipt",
+      "delivered": 8,
+      "accepted": 6,
+      "held": 2,
+      "reason": "Packaging damage",
       "crates": 6,
       "lowC": 2.4,
       "highC": 6.7,
       "authorized": "0.75 LOCAL",
-      "ticketHash": "0x6ebffabcc82b8d331720a54bf51ab8fb6cecd8f380eed7b91bdb178f497ee4e9"
+      "ticketHash": "0xed199c257b1c026427ecec84e19a7f8e4bb2c289e3cbb7b1ca3467dc2da31285"
     },
     {
       "step": "Confirm carrier payment",
       "verified": true,
       "chainId": 31337,
-      "contract": "0x7015DC5b9315d8B9eEEB4929354182B7732a64A5",
-      "carrier": "0x49f6900A14d2AdC0DdBd669463c2D8beaf72C092",
+      "contract": "0xcAC040A0146e849B77271A35E24F6E23C0c5D485",
+      "carrier": "0xd5588E18943a7B86672De971331E8742422A88D6",
       "amountBaseUnits": "750000",
       "block": 5,
-      "transactionHash": "0x7de0967a40339390ee0f1737a71a730f746cd3ec76911f9d70b2d26dda3d380e"
+      "transactionHash": "0x0b0954918e36b8a8c0735a362df565c8d8ca4844d695de38460d961a4348bf6f"
     },
     {
       "step": "Hold warm shipment",
@@ -52,48 +56,67 @@
       "refund": "3.75 LOCAL",
       "escrow": "0.00 LOCAL",
       "totalPaid": "0.75 LOCAL",
-      "transactionHash": "0xbc383f490eff352d0fb000efb411f8b13473d56c1df8eb4a67e1ae3b7688f141"
+      "transactionHash": "0x0381e6b6e2d689c800360400dcbf6c2b4f657c7a56d3a60b95fbb08ff125aaa6"
     }
   ],
+  "stationRecord": {
+    "version": 1,
+    "chainId": 31337,
+    "contract": "0xcAC040A0146e849B77271A35E24F6E23C0c5D485",
+    "ticket": {
+      "lot": "0x12798f1d88d8d0ae8d653165a2bca72ce0407062b396d14edb45467c2f2af1ab",
+      "crates": 6,
+      "low": 24,
+      "high": 67,
+      "route": "0x07376fb7bf9b904cb53985887a0d4b6031e96b26e8e78bf5cf16b81af934e0af",
+      "observedAt": 1795623631
+    },
+    "stationSig": "0x58e785f05533cd3d8431fa971710cc1e2b1af327fbadd8328cbf31cbf815d4d5770924f3558e0c1062b68b08cc37d9ec79a70d7c441e47fc135971697fc726071b",
+    "exception": {
+      "delivered": 8,
+      "reason": "Packaging damage",
+      "signature": "0x05d18665d82813ded8f61956af30e0d57c948669c013115f1d46b5c708771104466dac2844db75fe571286baec80090eb5f56eb7390fc5cdfebb2533713734831c"
+    }
+  },
   "proof": {
     "version": 1,
     "chainId": 31337,
-    "contract": "0x7015DC5b9315d8B9eEEB4929354182B7732a64A5",
-    "transactionHash": "0x7de0967a40339390ee0f1737a71a730f746cd3ec76911f9d70b2d26dda3d380e",
-    "blockHash": "0x4589cc4f02c74e132f2c39f8ba867b9cedc6296899209e490a156ebf1e8f88bf",
+    "contract": "0xcAC040A0146e849B77271A35E24F6E23C0c5D485",
+    "transactionHash": "0x0b0954918e36b8a8c0735a362df565c8d8ca4844d695de38460d961a4348bf6f",
+    "blockHash": "0x78fd9288b9402ba07a3eee7325f611d842032b394ccf1cf297599eb363d9c850",
     "blockNumber": 5,
-    "route": "0xc1eac9fc800a695f46350629d219eb717ad379719bc8a8b50e893ae58ca41f6a",
-    "lot": "0x8ea057d3457fd72aec3c55827faba53348373c081816f45b7356c749a81c72fe",
-    "carrier": "0x49f6900A14d2AdC0DdBd669463c2D8beaf72C092",
+    "route": "0x07376fb7bf9b904cb53985887a0d4b6031e96b26e8e78bf5cf16b81af934e0af",
+    "lot": "0x12798f1d88d8d0ae8d653165a2bca72ce0407062b396d14edb45467c2f2af1ab",
+    "carrier": "0xd5588E18943a7B86672De971331E8742422A88D6",
     "crates": "6",
     "amountBaseUnits": "750000",
-    "ticketHash": "0x6ebffabcc82b8d331720a54bf51ab8fb6cecd8f380eed7b91bdb178f497ee4e9",
+    "ticketHash": "0xed199c257b1c026427ecec84e19a7f8e4bb2c289e3cbb7b1ca3467dc2da31285",
     "envelope": {
       "version": 1,
       "chainId": 31337,
-      "contract": "0x7015DC5b9315d8B9eEEB4929354182B7732a64A5",
+      "contract": "0xcAC040A0146e849B77271A35E24F6E23C0c5D485",
       "ticket": {
-        "route": "0xc1eac9fc800a695f46350629d219eb717ad379719bc8a8b50e893ae58ca41f6a",
-        "lot": "0x8ea057d3457fd72aec3c55827faba53348373c081816f45b7356c749a81c72fe",
+        "route": "0x07376fb7bf9b904cb53985887a0d4b6031e96b26e8e78bf5cf16b81af934e0af",
+        "lot": "0x12798f1d88d8d0ae8d653165a2bca72ce0407062b396d14edb45467c2f2af1ab",
         "crates": 6,
         "low": 24,
         "high": 67,
-        "observedAt": 1795468819
+        "observedAt": 1795623631
       },
-      "stationSig": "0xb7369942a9d2ce497e818026d1354d18cc4c95240ae23070b25a9e25c33e561a6adc0efc0bcb0690c2935fc6ad03323618b5a857b921a1170e8c3ef13346c6271c"
+      "stationSig": "0x58e785f05533cd3d8431fa971710cc1e2b1af327fbadd8328cbf31cbf815d4d5770924f3558e0c1062b68b08cc37d9ec79a70d7c441e47fc135971697fc726071b"
     },
-    "agentSig": "0xd6d2fe77c4d30f04869847bcdfd158c2915750996b83b646c139bbcfcd8a3b6676440ef750300ba3c5afb1bb71ca7bb5b9c3eba1fcc0c4a41c6c4c69e841bb331c"
+    "agentSig": "0xb131b4daa2573042c8a36a645a797f42259d7dc13bfefb66ec1e805dc0370aad4cd8d7effbb7c3ef69b63cde46d52a77a498553c7f46286d7158c237f39b781a1b"
   },
   "audit": {
     "version": 1,
     "chainId": 31337,
-    "contract": "0x7015DC5b9315d8B9eEEB4929354182B7732a64A5",
-    "token": "0x78BE8407F4B04f1e8d9C4383f92A0DFC02d79821",
-    "route": "0xc1eac9fc800a695f46350629d219eb717ad379719bc8a8b50e893ae58ca41f6a",
-    "buyer": "0x63694ae6cC644ccBE223279A359C4fb6ec960Af5",
-    "carrier": "0x49f6900A14d2AdC0DdBd669463c2D8beaf72C092",
-    "station": "0xA0e2062C9EC5808267e7Ea048e9121e3F23fe47c",
-    "agent": "0x9AF71cd9904d88eB976b8e5711171C36A3418604",
+    "contract": "0xcAC040A0146e849B77271A35E24F6E23C0c5D485",
+    "token": "0x3066a2aD353B702Bbc64842b6185f38606f753a6",
+    "route": "0x07376fb7bf9b904cb53985887a0d4b6031e96b26e8e78bf5cf16b81af934e0af",
+    "buyer": "0x784B841E361a5A4Be587721876D61466d85Ea5bc",
+    "carrier": "0xd5588E18943a7B86672De971331E8742422A88D6",
+    "station": "0x976f540834030E56Be5a87e4AA0BB758Ce27D81C",
+    "agent": "0xc181B06639748FC4A6868657bAA7D1Fb7006d439",
     "fundedBaseUnits": "4500000",
     "paidBaseUnits": "750000",
     "refundedBaseUnits": "3750000",
@@ -103,51 +126,51 @@
       "maxCrates": 12,
       "low": 20,
       "high": 80,
-      "expiry": 1795555218
+      "expiry": 1795710030
     },
     "funding": {
-      "hash": "0xc78b6cc03511a9b4acdf9f8fca6319fc4cb792101b5d8a052a9089eada31c155",
+      "hash": "0x105403a39197152e3f78292f10c093e014e81d522fd6ad7e07c001505b7da05f",
       "block": 4,
-      "blockHash": "0xac9382ce05d42413719e7f6d9edca781d5d7355a65cd5283237af192d90f19af"
+      "blockHash": "0x1b800d4a7f55e3268076b0b27c33d96539b2467b50418664cbf3a3ebdc9db8db"
     },
     "settlement": {
-      "hash": "0x7de0967a40339390ee0f1737a71a730f746cd3ec76911f9d70b2d26dda3d380e",
+      "hash": "0x0b0954918e36b8a8c0735a362df565c8d8ca4844d695de38460d961a4348bf6f",
       "block": 5,
-      "blockHash": "0x4589cc4f02c74e132f2c39f8ba867b9cedc6296899209e490a156ebf1e8f88bf"
+      "blockHash": "0x78fd9288b9402ba07a3eee7325f611d842032b394ccf1cf297599eb363d9c850"
     },
     "refund": {
-      "hash": "0xbc383f490eff352d0fb000efb411f8b13473d56c1df8eb4a67e1ae3b7688f141",
+      "hash": "0x0381e6b6e2d689c800360400dcbf6c2b4f657c7a56d3a60b95fbb08ff125aaa6",
       "block": 6,
-      "blockHash": "0x139ff6fc975b848c0a64e21abdfe5f3ed176cbd2dbdfe852ffe37148486bb581"
+      "blockHash": "0x1612892fc863a1c6d618a3e8f9c293fe17b7d03d49518462318eaf8a4dde7a50"
     },
     "proof": {
       "version": 1,
       "chainId": 31337,
-      "contract": "0x7015DC5b9315d8B9eEEB4929354182B7732a64A5",
-      "transactionHash": "0x7de0967a40339390ee0f1737a71a730f746cd3ec76911f9d70b2d26dda3d380e",
-      "blockHash": "0x4589cc4f02c74e132f2c39f8ba867b9cedc6296899209e490a156ebf1e8f88bf",
+      "contract": "0xcAC040A0146e849B77271A35E24F6E23C0c5D485",
+      "transactionHash": "0x0b0954918e36b8a8c0735a362df565c8d8ca4844d695de38460d961a4348bf6f",
+      "blockHash": "0x78fd9288b9402ba07a3eee7325f611d842032b394ccf1cf297599eb363d9c850",
       "blockNumber": 5,
-      "route": "0xc1eac9fc800a695f46350629d219eb717ad379719bc8a8b50e893ae58ca41f6a",
-      "lot": "0x8ea057d3457fd72aec3c55827faba53348373c081816f45b7356c749a81c72fe",
-      "carrier": "0x49f6900A14d2AdC0DdBd669463c2D8beaf72C092",
+      "route": "0x07376fb7bf9b904cb53985887a0d4b6031e96b26e8e78bf5cf16b81af934e0af",
+      "lot": "0x12798f1d88d8d0ae8d653165a2bca72ce0407062b396d14edb45467c2f2af1ab",
+      "carrier": "0xd5588E18943a7B86672De971331E8742422A88D6",
       "crates": "6",
       "amountBaseUnits": "750000",
-      "ticketHash": "0x6ebffabcc82b8d331720a54bf51ab8fb6cecd8f380eed7b91bdb178f497ee4e9",
+      "ticketHash": "0xed199c257b1c026427ecec84e19a7f8e4bb2c289e3cbb7b1ca3467dc2da31285",
       "envelope": {
         "version": 1,
         "chainId": 31337,
-        "contract": "0x7015DC5b9315d8B9eEEB4929354182B7732a64A5",
+        "contract": "0xcAC040A0146e849B77271A35E24F6E23C0c5D485",
         "ticket": {
-          "route": "0xc1eac9fc800a695f46350629d219eb717ad379719bc8a8b50e893ae58ca41f6a",
-          "lot": "0x8ea057d3457fd72aec3c55827faba53348373c081816f45b7356c749a81c72fe",
+          "route": "0x07376fb7bf9b904cb53985887a0d4b6031e96b26e8e78bf5cf16b81af934e0af",
+          "lot": "0x12798f1d88d8d0ae8d653165a2bca72ce0407062b396d14edb45467c2f2af1ab",
           "crates": 6,
           "low": 24,
           "high": 67,
-          "observedAt": 1795468819
+          "observedAt": 1795623631
         },
-        "stationSig": "0xb7369942a9d2ce497e818026d1354d18cc4c95240ae23070b25a9e25c33e561a6adc0efc0bcb0690c2935fc6ad03323618b5a857b921a1170e8c3ef13346c6271c"
+        "stationSig": "0x58e785f05533cd3d8431fa971710cc1e2b1af327fbadd8328cbf31cbf815d4d5770924f3558e0c1062b68b08cc37d9ec79a70d7c441e47fc135971697fc726071b"
       },
-      "agentSig": "0xd6d2fe77c4d30f04869847bcdfd158c2915750996b83b646c139bbcfcd8a3b6676440ef750300ba3c5afb1bb71ca7bb5b9c3eba1fcc0c4a41c6c4c69e841bb331c"
+      "agentSig": "0xb131b4daa2573042c8a36a645a797f42259d7dc13bfefb66ec1e805dc0370aad4cd8d7effbb7c3ef69b63cde46d52a77a498553c7f46286d7158c237f39b781a1b"
     }
   }
 }

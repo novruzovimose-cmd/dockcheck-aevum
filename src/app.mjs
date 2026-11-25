@@ -1,3 +1,4 @@
+import { attestException, reconcileCounts } from "./disposition.mjs";
 import { signDelivery } from "./receiving.mjs";
 import pilot from "../evidence/aevum-pilot.json" with { type: "json" };
 import { routeTerms } from "./route-terms.mjs";
@@ -1142,7 +1143,7 @@ bind("rehearse", async () => {
     "Fund route": (s) => s.budget + " escrowed at " + s.rate + " per crate.",
     "Review signed receipt": (s) =>
       s.crates +
-      " crates at " +
+      " accepted of " + s.delivered + "; " + s.held + " held for packaging damage. Accepted crates at " +
       s.lowC +
       "–" +
       s.highC +
@@ -1315,7 +1316,7 @@ const recorded =
   "Saved Aevum receipt · block " +
   pilot.settlement.block.toLocaleString("en-US");
 $("pilot-summary").textContent =
-  exactToken(pilot.paidBaseUnits) +
+  "Separate Aevum receipt · " + exactToken(pilot.paidBaseUnits) +
   " tUSD8 paid · " +
   exactToken(pilot.refundedBaseUnits) +
   " tUSD8 refunded · block " +
@@ -1350,14 +1351,30 @@ $("handoff").onclick = () => {
     expires: new Date(Number(state.terms.expiry) * 1000).toISOString(),
   });
 };
+$("station-form").oninput = ({currentTarget: form}) => {
+  const delivered = form.elements.delivered.valueAsNumber;
+  const accepted = form.elements.crates.valueAsNumber;
+  const partial = delivered > accepted;
+  $("hold-label").hidden = !partial;
+  form.elements.reason.required = partial;
+  $("count-summary").textContent = !Number.isInteger(delivered) || !Number.isInteger(accepted) ? "" :
+    accepted > delivered ? "Check counts. Accepted exceeds delivered." :
+    accepted === 0 ? "Entire load held. No payment ticket can be signed." :
+    accepted + " eligible for payment · " + (delivered - accepted) + " held";
+};
 $("station-form").onsubmit = event => {
   event.preventDefault();
   const form = event.currentTarget;
   const fields = Object.fromEntries(new FormData(form));
+  let counts;
+  try {
+    counts = reconcileCounts(Number(fields.delivered),Number(fields.crates),fields.reason);
+    if (!counts.accepted) throw Error("Entire load held. No payment ticket can be signed.");
+  } catch (error) { $("count-summary").textContent = error.message; return; }
   openModal("Receiving station", "Review delivery ticket",
-    facts([["Contract",fields.contract],["Route",fields.route],["Lot reference",fields.reference],["Accepted crates",fields.crates],
+    facts([["Contract",fields.contract],["Route",fields.route],["Lot reference",fields.reference],["Delivered",counts.delivered],["Accepted crates",counts.accepted],["Held",counts.held],["Reason",counts.reason || "All accepted"],
       ["Observed range",fields.low+"–"+fields.high+" °C"],["Observed at (local time)",fields.time]]) +
-    "<p>Your station wallet signs these measurements. Send the signed ticket to the route’s payment agent.</p>" + button("station-sign","Sign delivery ticket"));
+    "<p>Your station wallet signs these measurements. For a partial delivery, a second wallet signature records the exception. Only accepted crates enter the payment ticket.</p>" + button("station-sign","Sign delivery ticket"));
   bind("station-sign", async () => {
     if (!window.ethereum) throw Error("Open this desk in a browser with your station wallet.");
     await window.ethereum.request({method:"eth_requestAccounts"});
@@ -1366,8 +1383,10 @@ $("station-form").onsubmit = event => {
     try {
       if ((await provider.getNetwork()).chainId !== 44005n) throw Error("Select the Aevum testnet.");
       const contract = await assertDesk(provider,getAddress(fields.contract.trim()));
-      const ticket = await signDelivery({provider,contract,route:fields.route.trim(),station:await provider.getSigner(),chainId:44005},
+      const station = await provider.getSigner();
+      const payment = await signDelivery({provider,contract,route:fields.route.trim(),station,chainId:44005},
         {...fields,observedAt:Math.floor(new Date(fields.time).getTime()/1000)});
+      const ticket = await attestException(station,payment,counts);
       openModal("Receiving station","Ticket signed",
         facts([["Lot reference",fields.reference],["Crates",ticket.ticket.crates],["Contract",ticket.contract]]) +
         "<p>Download the signed JSON and deliver it to the agent’s inbox. Payment confirmation comes after the agent submits it.</p>"+button("save-ticket","Download signed ticket"));

@@ -9,6 +9,7 @@ import {
   settleSigned,
   stationTicket,
 } from "./protocol.mjs";
+import { attestException, verifyException } from "./disposition.mjs";
 import { auditRoute } from "./audit.mjs";
 import { proofFromHash } from "./verify.mjs";
 
@@ -43,8 +44,11 @@ export async function runRehearsal(engine, report = () => {}) {
       low: 24,
       high: 67,
     });
+    const stationRecord = await attestException(session.station,good,{delivered:8,reason:"Packaging damage"});
+    const counts = verifyException(stationRecord,session.station.address);
     const release = await releaseFor(contract, 31337, good, agent);
     log("Review signed receipt", {
+      ...counts,
       crates: 6,
       lowC: 2.4,
       highC: 6.7,
@@ -150,6 +154,7 @@ export async function runRehearsal(engine, report = () => {}) {
     return {
       environment: "Ephemeral local EVM, chain 31337",
       steps,
+      stationRecord,
       proof,
       audit,
     };

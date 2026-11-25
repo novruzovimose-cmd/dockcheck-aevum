@@ -1,4 +1,9 @@
-# DockCheck 1.2.0
+# DockCheck 1.3.0
+
+Receiving clerks can record delivered and accepted quantities separately. Partial receipts include a second EIP-712 signature binding the delivered count and exception reason to the payment ticket. The agent checks an attached exception before relay. Only accepted crates are payable. A settled lot is final. Held crates cannot be settled later under the same lot identifier.
+
+Try **Try a partial delivery** on localhost for the eight-crate case. The isolated blockchain pays for six and returns remaining escrow when the buyer closes the route. The public Aevum receipt is a separate, earlier payment. Use the exported walkthrough record to inspect the signatures. Station observations are human attestations.
+
 
 Receiving stations can open **Receive a delivery and sign a ticket**, enter their route and actual measurements, review the ticket, sign with their assigned wallet, and download agent-compatible JSON. The agent consumes it with `npm run agent -- ticket.json`. Use the same physical lot reference on every retry. A full 32-byte lot ID is preserved for CLI interoperability. Other references are uppercased and hashed. The station attests to the measurements.
 
