@@ -111,6 +111,12 @@
           </div>
         </form>
       </section>
+      <details class="card" style="margin-top:18px"><summary><strong>Receive a delivery and sign a ticket</strong></summary>
+        <form id="station-form"><p>Use your assigned Aevum station wallet and the lot reference on the shipment. Enter the time the goods were measured.</p>
+        <label>Escrow contract<input id="station-contract" name="contract" required></label><label>Route ID from buyer<input required name="route" pattern="0x[0-9a-fA-F]{64}"></label>
+        <div class="policy-fields"><label>Shipment lot reference<input required maxlength="80" name="reference"></label><label>Accepted crates<input required type="number" min="1" step="1" name="crates"></label>
+        <label>Lowest temperature (°C)<input required type="number" step="0.1" name="low"></label><label>Highest temperature (°C)<input required type="number" step="0.1" name="high"></label></div>
+        <label>Observation time on this device<input required name="time" type="datetime-local" step="1"></label><button class="primary">Review station ticket</button></form></details>
       <section class="case-strip" aria-labelledby="case-title">
         <div>
           <p class="over">Aevum testnet receipt</p>
@@ -277,7 +283,7 @@
         <div id="history" role="list"></div>
       </section>
       <footer>
-        <span>DockCheck 1.1.0 / Freight settlement</span
+        <span>DockCheck 1.2.0 / Freight settlement</span
         ><button id="source">Contract source</button
         ><a
           href="https://qday.io/builder-challenge"

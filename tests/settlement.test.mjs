@@ -276,3 +276,15 @@ isolated("separate route budgets and replay domains are isolated", async () => {
   );
   assert.equal((await s.contract.routeOf(route)).remaining, 4500000n);
 });
+
+test("receiving desk ticket settles through the agent and a repeated physical lot is held", async () => {
+  const { signDelivery } = await import("../src/receiving.mjs");
+  const fields = {reference:"Dock-127", crates:"6", low:"2.4",high:"6.7", observedAt:await head(s.provider)};
+  await assert.rejects(signDelivery({...s,station:Wallet.createRandom()},fields),/station wallet/);
+  await assert.rejects(signDelivery(s,{...fields,high:"9.0"}),/temperature/);
+  const envelope = await signDelivery(s,fields);
+  const release = await releaseFor(s.contract,s.chainId,envelope,s.agent);
+  const proof = await settleSigned(s.contract,envelope,release);
+  assert.equal(proof.amountBaseUnits,"750000");
+  await assert.rejects(signDelivery(s,{...fields,reference:"dock-127"}),/already been paid/);
+});

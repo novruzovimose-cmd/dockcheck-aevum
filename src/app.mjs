@@ -1,3 +1,4 @@
+import { signDelivery } from "./receiving.mjs";
 import pilot from "../evidence/aevum-pilot.json" with { type: "json" };
 import { routeTerms } from "./route-terms.mjs";
 import { compareInvoice } from "./invoice.mjs";
@@ -1349,6 +1350,33 @@ $("handoff").onclick = () => {
     expires: new Date(Number(state.terms.expiry) * 1000).toISOString(),
   });
 };
+$("station-form").onsubmit = event => {
+  event.preventDefault();
+  const form = event.currentTarget;
+  const fields = Object.fromEntries(new FormData(form));
+  openModal("Receiving station", "Review delivery ticket",
+    facts([["Contract",fields.contract],["Route",fields.route],["Lot reference",fields.reference],["Accepted crates",fields.crates],
+      ["Observed range",fields.low+"–"+fields.high+" °C"],["Observed at (local time)",fields.time]]) +
+    "<p>Your station wallet signs these measurements. Send the signed ticket to the route’s payment agent.</p>" + button("station-sign","Sign delivery ticket"));
+  bind("station-sign", async () => {
+    if (!window.ethereum) throw Error("Open this desk in a browser with your station wallet.");
+    await window.ethereum.request({method:"eth_requestAccounts"});
+    await window.ethereum.request({method:"wallet_switchEthereumChain",params:[{chainId:net.hex}]});
+    const provider = new BrowserProvider(window.ethereum,undefined,{cacheTimeout:-1});
+    try {
+      if ((await provider.getNetwork()).chainId !== 44005n) throw Error("Select the Aevum testnet.");
+      const contract = await assertDesk(provider,getAddress(fields.contract.trim()));
+      const ticket = await signDelivery({provider,contract,route:fields.route.trim(),station:await provider.getSigner(),chainId:44005},
+        {...fields,observedAt:Math.floor(new Date(fields.time).getTime()/1000)});
+      openModal("Receiving station","Ticket signed",
+        facts([["Lot reference",fields.reference],["Crates",ticket.ticket.crates],["Contract",ticket.contract]]) +
+        "<p>Download the signed JSON and deliver it to the agent’s inbox. Payment confirmation comes after the agent submits it.</p>"+button("save-ticket","Download signed ticket"));
+      $("save-ticket").onclick = () => downloadJSON("dockcheck-ticket-"+ticket.ticket.lot+".json",ticket);
+    } finally { provider.destroy(); }
+  });
+};
+$("station-contract").value = pilot.contract;
+
 $("lookup").onsubmit = (event) => {
   event.preventDefault();
   const hash = $("lookup-hash").value.trim();

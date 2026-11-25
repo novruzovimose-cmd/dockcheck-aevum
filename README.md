@@ -1,12 +1,14 @@
 # DockCheck
 
+Receiving stations can open **Receive a delivery and sign a ticket**, enter their route and actual measurements, review the ticket, sign with their assigned wallet, and download agent-compatible JSON. The agent consumes it with `npm run agent -- ticket.json`. Use the same physical lot reference on every retry. A full 32-byte lot ID is preserved for CLI interoperability. Other references are uppercased and hashed. The station attests to the measurements.
+
 **Pay the carrier for the crates the receiving dock actually accepts.** A produce buyer funds a route in tUSD8. A receiving station signs the lot, accepted quantity and measured temperature range. A scoped agent checks the receipt and co-signs a fixed-rate payout to the carrier. The buyer can revoke the route and reclaim its unspent budget.
 
 The example route runs from Kutaisi to Tbilisi. The example crate prices and temperature band are fictional contract terms. Each buyer sets terms for its own cargo.
 
 ## Run the release
 
-Download **DockCheck-1.1.0.zip** from the [GitHub release](https://github.com/novruzovimose-cmd/dockcheck-aevum/releases/tag/v1.1.0) and extract the whole archive. Choose the named release asset for the prebuilt application.
+Download **DockCheck-1.2.0.zip** from the [GitHub release](https://github.com/novruzovimose-cmd/dockcheck-aevum/releases/tag/v1.2.0) and extract the whole archive. Choose the named release asset for the prebuilt application.
 
 | Platform | Start |
 | --- | --- |
@@ -25,7 +27,7 @@ Open **Open buyer workspace → Connect to Aevum → Use existing contract**. Se
 
 From a clean Git checkout, run `npm ci` and `npm run dev`. The development server builds Solidity and the browser bundle, watches source changes and serves localhost. Refresh the browser after an edit. Use `npm test` for the regression suite. Use `npm run build && npm start` for a single build.
 
-To assemble a versioned distribution on Linux, install Python 3.10+ and a Go compiler (the release pipeline uses Go 1.25.x), then run `npm run package`. Package assembly reads Git-tracked source, compiled assets and cross-compiled Windows/Linux x64 launchers. Its output includes the Docker image, demo film, source, notices, evidence and a checksum manifest. Run `python3 scripts/check_release.py release/DockCheck-1.1.0.zip`. Each package also has an external SHA-256 file. See [release notes](docs/RELEASE.md).
+To assemble a versioned distribution on Linux, install Python 3.10+ and a Go compiler (the release pipeline uses Go 1.25.x), then run `npm run package`. Package assembly reads Git-tracked source, compiled assets and cross-compiled Windows/Linux x64 launchers. Its output includes the Docker image, demo film, source, notices, evidence and a checksum manifest. Run `python3 scripts/check_release.py release/DockCheck-1.2.0.zip`. Each package also has an external SHA-256 file. See [release notes](docs/RELEASE.md).
 
 ### Judge walkthrough
 
@@ -44,10 +46,10 @@ The downloadable project ZIP includes a loadable image without any npm or blockc
 
 ```sh
 docker load -i delivery/dockcheck-linux-amd64.tar
-docker run --rm -p 127.0.0.1:8080:8080 dockcheck:1.1.0
+docker run --rm -p 127.0.0.1:8080:8080 dockcheck:1.2.0
 ```
 
-Open http://127.0.0.1:8080. On a different architecture, run `docker build -t dockcheck:1.1.0 .` with the included Dockerfile. The Go server runs as UID 65532. HTTPS or localhost is required for browser cryptography. No wallet is needed for the local flow.
+Open http://127.0.0.1:8080. On a different architecture, run `docker build -t dockcheck:1.2.0 .` with the included Dockerfile. The Go server runs as UID 65532. HTTPS or localhost is required for browser cryptography. No wallet is needed for the local flow.
 
 ## Rebuild, test and reproduce the evidence
 
@@ -61,7 +63,7 @@ npm run demo
 npm start
 ```
 
-The included test report records 36 passing tests. One integration test uses a loopback-only Aevum-shaped fixture to exercise the full CLI, including a relayer restart. Tests compile the contracts with solc-js and execute the bytecode in Ganache. Coverage includes authorization, exact transfer amounts, conservation of the route budget, sender-independent relaying, freshness, expiry, revocation, duplicate lots, altered signatures, modified evidence, and reconstructing a lost receipt from calldata. The demo writes the fresh full transcript and signatures to `runtime-output/local-run.json`. Each run uses new local addresses and hashes. This is a functional test suite, not a security audit.
+The included test report records 37 passing tests. One integration test uses a loopback-only Aevum-shaped fixture to exercise the full CLI, including a relayer restart. Tests compile the contracts with solc-js and execute the bytecode in Ganache. Coverage includes authorization, exact transfer amounts, conservation of the route budget, sender-independent relaying, freshness, expiry, revocation, duplicate lots, altered signatures, modified evidence, and reconstructing a lost receipt from calldata. The demo writes the fresh full transcript and signatures to `runtime-output/local-run.json`. Each run uses new local addresses and hashes. This is a functional test suite, not a security audit.
 
 ## Architecture
 

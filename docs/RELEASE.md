@@ -1,4 +1,6 @@
-# DockCheck 1.1.0
+# DockCheck 1.2.0
+
+Receiving stations can open **Receive a delivery and sign a ticket**, enter their route and actual measurements, review the ticket, sign with their assigned wallet, and download agent-compatible JSON. The agent consumes it with `npm run agent -- ticket.json`. Use the same physical lot reference on every retry. A full 32-byte lot ID is preserved for CLI interoperability. Other references are uppercased and hashed. The station attests to the measurements.
 
 This release serves buyers, receiving stations, carriers and accounts-payable teams on the Aevum public testnet (44005). The default workspace verifies existing carrier payments. Route funding uses buyer-defined terms and independently held station and agent signing keys. The signed delivery and escrow contracts are compatible with the existing deployed contract.
 
