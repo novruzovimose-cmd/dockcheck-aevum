@@ -1,0 +1,79 @@
+{
+  "version": 1,
+  "chainId": 31337,
+  "contract": "0x7bd7DE3d5FD599af05707c55D2345cA613011Af5",
+  "delivery": "0x049cdbcb4165360d28f50ea8fd23c06574aa298af455e288ff642b9aaedfa217",
+  "buyer": "0xe85eB39Da48950c9450CEF5379e11eC453462199",
+  "carrier": "0x0246d3B25A1d8432ff905c2244eFAc902E5bB2C5",
+  "reviewer": "0x88F4220514dAe4A9bE71EcF3A96B0caDC4A5380B",
+  "asOfBlock": 9,
+  "received": true,
+  "holdReasonHash": "0x0816c746c128a9b26c1ea36c6a3e3de3431f66cc5185be25c534db5a9d6b6e1b",
+  "decisionReasonHash": "0x1974cca6d6d88a9e7ec44f96c9e815dbda22e86061d52627e80b23bc8facaeeb",
+  "fundedBaseUnits": "80000",
+  "paidBaseUnits": "70000",
+  "refundedBaseUnits": "10000",
+  "reservedBaseUnits": "0",
+  "rows": [
+    {
+      "crate": 1,
+      "status": "paid at intake"
+    },
+    {
+      "crate": 2,
+      "status": "paid at intake"
+    },
+    {
+      "crate": 3,
+      "status": "paid at intake"
+    },
+    {
+      "crate": 4,
+      "status": "paid at intake"
+    },
+    {
+      "crate": 5,
+      "status": "paid at intake"
+    },
+    {
+      "crate": 6,
+      "status": "paid at intake"
+    },
+    {
+      "crate": 7,
+      "status": "paid after inspection"
+    },
+    {
+      "crate": 8,
+      "status": "rejected"
+    }
+  ],
+  "events": [
+    {
+      "event": "Funded",
+      "hash": "0x0253ab8f0c2c5720481ac49e4f07aa07b4f9ab534b6daba5c664d328adde53d3",
+      "block": 7,
+      "blockHash": "0x1d0a2d190a9a22d83e23cecfdb8208d8de421807d78b9db1274eb5ffbbd482c9",
+      "paidBaseUnits": "0",
+      "refundedBaseUnits": "0"
+    },
+    {
+      "event": "Received",
+      "hash": "0xd0e0e3db08877504d3d6835bbebc368d3da616f0f0ecdda5bbb203655921962b",
+      "block": 8,
+      "blockHash": "0xdcb9c98b91c384d4d19eaaa3e8df70ad7b37e920e7474b8d7a3ee82a2f351f05",
+      "paidBaseUnits": "60000",
+      "refundedBaseUnits": "0"
+    },
+    {
+      "event": "Finalized",
+      "hash": "0xf016017d6e5d8751777b62d6b53deee6d469a87b32970bd83854bac7956b8ace",
+      "block": 9,
+      "blockHash": "0x99c7e604e45ae2a08a57c61c6681b9176fd454507ec4f2569b0862f66c2952b6",
+      "paidBaseUnits": "10000",
+      "refundedBaseUnits": "10000"
+    }
+  ],
+  "intakeReason": "Packaging damage on crates 7 and 8",
+  "reviewReason": "Inspection cleared crates 7. Remaining held crates rejected."
+}

@@ -6,6 +6,7 @@ const directory = "artifacts";
 fs.mkdirSync(directory, { recursive: true });
 for (const [file, name] of [
   ["contracts/DockCheck.sol", "DockCheck"],
+  ["contracts/DeliveryReserve.sol", "DeliveryReserve"],
   ["contracts/test/RehearsalToken.sol", "RehearsalToken"],
 ]) {
   const sources = {};
@@ -39,6 +40,7 @@ for (const [file, name] of [
             "abi",
             "evm.bytecode.object",
             "evm.deployedBytecode.object",
+            ...(name === "DeliveryReserve" ? ["evm.deployedBytecode.immutableReferences"] : []),
             "metadata",
           ],
         },
@@ -61,14 +63,15 @@ for (const [file, name] of [
         abi: c.abi,
         bytecode: "0x" + c.evm.bytecode.object,
         runtime: "0x" + c.evm.deployedBytecode.object,
+        ...(name === "DeliveryReserve" ? {immutableReferences:c.evm.deployedBytecode.immutableReferences} : {}),
       },
       null,
       2,
     ) + "\n",
   );
-  if (name === "DockCheck")
+  if (name === "DockCheck" || name === "DeliveryReserve")
     fs.writeFileSync(
-      directory + "/standard-input.json",
+      directory + (name === "DockCheck" ? "/standard-input.json" : "/reserve-standard-input.json"),
       JSON.stringify(input, null, 2) + "\n",
     );
   console.log(

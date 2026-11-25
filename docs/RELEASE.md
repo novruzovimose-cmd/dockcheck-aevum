@@ -1,4 +1,6 @@
-# DockCheck 1.4.0
+# DockCheck 1.5.0
+
+DeliveryReserve introduces prepaid manifests, numbered crate positions, immediate payment on intake, review of held freight and deadline refunds. Choose **Resolve held crates** for the interactive workflow or use the Aevum operator CLI described in [Delivery reserve](DELIVERY-RESERVE.md). The public payment evidence is from the earlier DockCheck route contract. The new reserve has local execution evidence only.
 
 The accounting verifier links a signed receiving exception to its exact mined payment. A reference SQLite importer supports duplicate handling, later attachment of inspection evidence, and conflict review. The browser desk and CLI also reconcile multiple payouts on a closed route. Accepted quantity and the token transfer remain independently verifiable when a station attachment is unavailable.
 

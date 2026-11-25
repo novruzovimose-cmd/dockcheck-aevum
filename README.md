@@ -1,5 +1,8 @@
 # DockCheck
 
+**Resolve held crates on the original delivery.** Extract the release and run `START-WINDOWS.cmd` on Windows x64. Open **Resolve held crates**, choose which of crates 7 and 8 pass inspection, and run the settlement. The default choice pays for seven of eight crates in two transfers, refunds one crate and exports one delivery record. The walkthrough executes on an isolated local EVM. The separate Aevum operator commands, expiration rules, trust assumptions and pilot worksheet are in [Delivery reserve](docs/DELIVERY-RESERVE.md). The earlier route contract continues to support its original payment flow.
+
+
 **Verify the public carrier payment and import it into a local ledger** (Node 22 and Python 3). After `npm ci`, run these commands from the repository root. They read Aevum without a wallet. Repeating the import produces `already posted`.
 
 ```sh

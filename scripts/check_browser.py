@@ -32,6 +32,16 @@ with sync_playwright() as runtime:
         import json
         booking = json.loads(download.value.path().read_text())
         assert booking["inspection"]["held"] == 2 and booking["amountBaseUnits"] == "750000"
+        page.locator("#dismiss").click()
+        page.locator("#inspection").click()
+        expect(page.locator("#pass7")).to_be_checked()
+        page.locator("#record-inspection").click()
+        expect(page.locator("#inspection-download")).to_be_visible(timeout=120000)
+        with page.expect_download() as saved:
+            page.locator("#inspection-download").click()
+        record = json.loads(saved.value.path().read_text())
+        assert record["paidBaseUnits"] == "70000" and record["refundedBaseUnits"] == "10000"
+        assert record["rows"][-1]["status"] == "rejected" and len(record["events"]) == 3
         assert not errors, errors
         print(f"{width}px: reviewed partial intake, held full load, completed local settlement", flush=True)
         page.close()

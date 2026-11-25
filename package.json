@@ -1,6 +1,6 @@
 {
   "name": "dockcheck-aevum",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "private": true,
   "description": "Cold-chain delivery receipts that release capped tUSD8 freight payments.",
   "license": "MIT",
@@ -25,7 +25,8 @@
     "mine": "node scripts/mine-aevum.mjs",
     "verify:source": "node scripts/verify-source.mjs",
     "exception": "node scripts/exception.mjs",
-    "payable": "node examples/book-payment.mjs"
+    "payable": "node examples/book-payment.mjs",
+    "reserve": "node scripts/reserve.mjs"
   },
   "dependencies": {
     "@fontsource/barlow": "5.3.0",

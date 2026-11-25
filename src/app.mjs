@@ -1,3 +1,4 @@
+import { runInspection } from "./reserve.mjs";
 import { reconcilePayable } from "./payable.mjs";
 import { attestException, reconcileCounts } from "./disposition.mjs";
 import { signDelivery } from "./receiving.mjs";
@@ -1168,6 +1169,23 @@ function openAudit(hashes = {}, useCurrentChain = false) {
   };
 }
 $("audit-route").onclick = () => openAudit();
+bind("inspection", () => {
+  openModal("Inspection · local blockchain","Review crates 7 and 8",
+    "<p>Eight crates at 0.01 LOCAL each. The station accepts crates 1–6. The other two have damaged packaging. Select the held crates that pass inspection.</p>" +
+    '<fieldset><legend>Release after inspection</legend><label><input type="checkbox" id="pass7" checked> Crate 7</label><label><input type="checkbox" id="pass8"> Crate 8</label></fieldset>' +
+    "<p>Unchecked crates will be rejected and their freight refunded.</p>"+button("record-inspection","Run settlement and review"));
+  bind("record-inspection", async () => {
+    const passed = [7,8].filter(n=>$("pass"+n).checked);
+    $("dialog-note").textContent = "Funding the delivery, signing both decisions and checking settlement…";
+    const record = await runInspection(await loadLocalEngine(),passed);
+    openModal("Accounts payable · local blockchain","Delivery reconciled",
+      facts([["Paid at intake","6 crates · 0.06 LOCAL"],["Released after inspection",passed.length+" crates"],
+        ["Total paid",exactToken(record.paidBaseUnits)+" LOCAL"],["Refunded",exactToken(record.refundedBaseUnits)+" LOCAL"],
+        ...record.rows.slice(6).map(row=>["Crate "+row.crate,row.status])]) +
+      button("inspection-download","Download delivery record"));
+    $("inspection-download").onclick = () => downloadJSON("delivery-inspection.json",record);
+  });
+});
 bind("rehearse", async () => {
   openModal(
     "Local Solidity rehearsal · 31337",

@@ -1,8 +1,8 @@
-✔ isolated RPC fixture exercises CLI deploy, idempotent funding, signer separation, journal recovery, proof and refund (14645.876132ms)
-✔ eight billed versus six received flags two crates and the exact excess (4.542265ms)
-✔ identical totals cannot conceal a quantity mismatch (0.486773ms)
-✔ underbilling and one-base-unit differences retain their direction (0.317439ms)
-✔ invalid decimals, crate counts and blank references cannot generate reports (0.875348ms)
+✔ isolated RPC fixture exercises CLI deploy, idempotent funding, signer separation, journal recovery, proof and refund (16504.970033ms)
+✔ eight billed versus six received flags two crates and the exact excess (1.773873ms)
+✔ identical totals cannot conceal a quantity mismatch (0.402606ms)
+✔ underbilling and one-base-unit differences retain their direction (0.223552ms)
+✔ invalid decimals, crate counts and blank references cannot generate reports (0.455355ms)
 This version of µWS is not compatible with your Node.js build:
 
 Error: Cannot find module '../binaries/uws_linux_x64_137.node'
@@ -12,18 +12,18 @@ Require stack:
 Falling back to a NodeJS implementation; performance may be degraded.
 
 
-✔ proof matches both signatures, token movement, runtime, block and on-chain replay marker (2088.75168ms)
-✔ tampered evidence is rejected: amountBaseUnits (60.608109ms)
-✔ tampered evidence is rejected: chainId (15.45475ms)
-✔ tampered evidence is rejected: blockHash (8.84219ms)
-✔ tampered evidence is rejected: ticketHash (36.981226ms)
-✔ proof with substituted station measurement fails (26.694211ms)
-✔ proof remains verifiable after the buyer revokes the route (409.577948ms)
-✔ an independent reader reconstructs a lost export from transaction calldata (46.942963ms)
-✔ closed route reconciles the mined deposit, payout and refund (83.884037ms)
-✔ a mismatched order or an invented transaction cannot yield an audit (12.000568ms)
-✔ accounting verifies the attachment against the specific paid lot; repeated imports retain their ID (237.346789ms)
-✔ multi-lot closeout accepts unordered receipts and rejects omitted or repeated payouts (2612.59704ms)
+✔ proof matches both signatures, token movement, runtime, block and on-chain replay marker (1646.634139ms)
+✔ tampered evidence is rejected: amountBaseUnits (78.43931ms)
+✔ tampered evidence is rejected: chainId (1.588165ms)
+✔ tampered evidence is rejected: blockHash (7.921431ms)
+✔ tampered evidence is rejected: ticketHash (35.626742ms)
+✔ proof with substituted station measurement fails (27.402318ms)
+✔ proof remains verifiable after the buyer revokes the route (355.393055ms)
+✔ an independent reader reconstructs a lost export from transaction calldata (45.661487ms)
+✔ closed route reconciles the mined deposit, payout and refund (70.364762ms)
+✔ a mismatched order or an invented transaction cannot yield an audit (12.409094ms)
+✔ accounting verifies the attachment against the specific paid lot; repeated imports retain their ID (217.201638ms)
+✔ multi-lot closeout accepts unordered receipts and rejects omitted or repeated payouts (2573.568746ms)
 This version of µWS is not compatible with your Node.js build:
 
 Error: Cannot find module '../binaries/uws_linux_x64_137.node'
@@ -33,34 +33,49 @@ Require stack:
 Falling back to a NodeJS implementation; performance may be degraded.
 
 
-✔ source build matches the runtime and route is fully escrowed (1688.484636ms)
-✔ independent actors authorize six crates for exactly 0.750000 (1899.760748ms)
-✔ too warm leaves carrier and escrow balances intact (72.288909ms)
-✔ too cold leaves carrier and escrow balances intact (60.38466ms)
-✔ inverted range leaves carrier and escrow balances intact (61.777817ms)
-✔ empty load leaves carrier and escrow balances intact (41.086411ms)
-✔ oversized load leaves carrier and escrow balances intact (47.606289ms)
-✔ empty lot leaves carrier and escrow balances intact (57.046958ms)
-✔ inclusive temperature boundaries and the maximum crate count pass (66.741801ms)
-✔ receiver signature cannot authorize a modified quantity (334.994163ms)
-✔ one role cannot sign for both roles (122.252736ms)
-✔ a signature for another chain fails (334.631733ms)
-✔ expiry, old readings, and future readings are enforced against block time (905.813106ms)
-✔ revocation returns only remaining escrow and invalidates signed tickets (2005.135016ms)
-✔ separate valid lots cannot collectively exceed the route budget (3620.88761ms)
-✔ invalid route roles and unsound limits fail before funding (180.060644ms)
-✔ the same owner salt cannot reopen a closed route (1294.753647ms)
-✔ an independent gas relayer cannot change the payee or amount (1130.228502ms)
-✔ separate route budgets and replay domains are isolated (1085.938464ms)
-✔ receiving desk ticket settles through the agent and a repeated physical lot is held (936.025939ms)
-✔ partial receipt authenticates the exception, settles only accepted crates and detects edits (808.53776ms)
-✔ buyer terms retain six decimals, signed temperature and expiry (10.22292ms)
-✔ invalid policy or actor is rejected before a wallet request (4.073867ms)
-ℹ tests 40
+✔ same delivery pays six, reserves two, releases crate seven and refunds crate eight (3090.787362ms)
+✔ only assigned reviewer can release held crates and the decision binds the exact selection (780.831685ms)
+✔ deadline refund with intake true (1236.671189ms)
+✔ deadline refund with intake false (389.66899ms)
+✔ accepting all closes at intake; bit identifiers cover the full supported manifest (437.579044ms)
+✔ fully held load can be completely rejected (727.054485ms)
+This version of µWS is not compatible with your Node.js build:
+
+Error: Cannot find module '../binaries/uws_linux_x64_137.node'
+Require stack:
+- /workspace/scratch/679a0c30ee21/DockCheck/node_modules/ganache/node_modules/@trufflesuite/uws-js-unofficial/src/uws.js
+- /workspace/scratch/679a0c30ee21/DockCheck/node_modules/ganache/dist/node/core.js
+Falling back to a NodeJS implementation; performance may be degraded.
+
+
+✔ source build matches the runtime and route is fully escrowed (2556.01816ms)
+✔ independent actors authorize six crates for exactly 0.750000 (726.191952ms)
+✔ too warm leaves carrier and escrow balances intact (37.778142ms)
+✔ too cold leaves carrier and escrow balances intact (24.467204ms)
+✔ inverted range leaves carrier and escrow balances intact (29.538642ms)
+✔ empty load leaves carrier and escrow balances intact (21.890096ms)
+✔ oversized load leaves carrier and escrow balances intact (29.076403ms)
+✔ empty lot leaves carrier and escrow balances intact (19.506779ms)
+✔ inclusive temperature boundaries and the maximum crate count pass (26.93236ms)
+✔ receiver signature cannot authorize a modified quantity (125.441527ms)
+✔ one role cannot sign for both roles (42.597551ms)
+✔ a signature for another chain fails (153.8645ms)
+✔ expiry, old readings, and future readings are enforced against block time (311.910544ms)
+✔ revocation returns only remaining escrow and invalidates signed tickets (983.080853ms)
+✔ separate valid lots cannot collectively exceed the route budget (3337.684113ms)
+✔ invalid route roles and unsound limits fail before funding (163.237314ms)
+✔ the same owner salt cannot reopen a closed route (1477.061218ms)
+✔ an independent gas relayer cannot change the payee or amount (1114.455225ms)
+✔ separate route budgets and replay domains are isolated (620.221692ms)
+✔ receiving desk ticket settles through the agent and a repeated physical lot is held (650.047894ms)
+✔ partial receipt authenticates the exception, settles only accepted crates and detects edits (3334.79919ms)
+✔ buyer terms retain six decimals, signed temperature and expiry (7.411224ms)
+✔ invalid policy or actor is rejected before a wallet request (4.15142ms)
+ℹ tests 46
 ℹ suites 0
-ℹ pass 40
+ℹ pass 46
 ℹ fail 0
 ℹ cancelled 0
 ℹ skipped 0
 ℹ todo 0
-ℹ duration_ms 17689.298341
+ℹ duration_ms 17022.571847
