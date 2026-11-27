@@ -2,7 +2,7 @@
   "name": "dockcheck-aevum",
   "version": "1.6.1",
   "private": true,
-  "description": "Cold-chain delivery receipts that release capped tUSD8 freight payments.",
+  "description": "Aevum freight settlement with signed receiving tickets, verified tUSD8 payments and invoice reconciliation.",
   "license": "MIT",
   "type": "module",
   "engines": {
