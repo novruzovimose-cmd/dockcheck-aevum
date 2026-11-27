@@ -8,13 +8,13 @@ A carrier invoices for eight crates. The receiving dock signed for six. Which tw
 
 | Time | What to show | What to say |
 | --- | --- | --- |
-| 0:00–0:30 | View mined receipt | A buyer on Aevum escrowed 0.10 tUSD8. The station accepted six crates at 0.01 each. Point to the mined carrier transfer and buyer refund. |
+| 0:00–0:30 | Verify the public payment | A buyer on Aevum escrowed 0.10 tUSD8. The station accepted six crates at 0.01 each. Point to the mined carrier transfer and buyer refund. |
 | 0:30–1:10 | Check carrier invoice → Compare invoice | An example carrier bill says eight crates and 0.08. Show the two-crate discrepancy, the exact 0.02 difference, and the printable report with its transaction hash. Correct the bill to six and 0.06 to show a match. |
 | 1:10–2:00 | Reopen the pilot receipt → Recheck on Aevum | Verify the three prefilled hashes on the public chain. Show the fixed carrier, deposit, payout and refund. The entrant can also reproduce the evidence from the CLI. |
 | 2:00–3:05 | Try a partial delivery | Label this chain as local. Follow the signed receipt through settlement, a warm load, a repeated lot and revocation. Select Inspect signed exception. Show the two crates held for packaging damage. Download the verified entry for accounts payable. |
 | 3:05–3:35 | Print the variance report | A distributor could pilot this with one receiving station and one carrier. Measure time spent resolving each disputed invoice line. No commercial trial or customer savings are claimed. |
 
-The recorded public receipt is available offline in the desk. A fresh chain check requires an Internet connection. The bundled video demonstrates the separate local run.
+The recorded public receipt is available offline in the desk. A fresh chain check requires an Internet connection. The bundled video demonstrates the local workflow. Use Verify the public payment to present the on-chain case live.
 
 ## Project description to adapt for DoraHacks
 
@@ -33,10 +33,10 @@ The open-source package includes a receiving desk, Solidity escrow, separate buy
 | Submission item | State in this archive |
 | --- | --- |
 | Public GitHub URL | https://github.com/novruzovimose-cmd/dockcheck-aevum |
-| Judge-accessible live demo | Localhost via the packaged image in delivery/ |
+| Judge-accessible live demo | [Public website](https://raw.githack.com/novruzovimose-cmd/dockcheck-aevum/site-v1.6.0/index.html) and a packaged Docker image |
 | Aevum contract address and deployment hash | [contract](https://explorer-test.qday.info/address/0x181BA084DCb2946EB65Cb020B85dA5e8ED44431e) · [deployment](https://explorer-test.qday.info/tx/0xb1432ef83b86d979c1f687fd3a10967c85c51d65bffd10474043e7964781f1ea) |
 | Funding, payment and refund transaction hashes | [funding](https://explorer-test.qday.info/tx/0xa9534597038e065c352d880b9b53c7d85879dbe177278ff1eceaca3179702099) · [settlement](https://explorer-test.qday.info/tx/0xb0dde94cdef82452a2113eae4a74871ef5e432ea528bccf8c684e7623c0030ad) · [refund](https://explorer-test.qday.info/tx/0x3f0a89e1bd8226661836f791923a0591cee3a5e9acb7f0f2ccb3a20c04822c0a) |
-| Explorer source-verification status | Independent source/deployment match in evidence/aevum-source-match.json. Explorer badge unconfirmed. |
+| Explorer source-verification status | Independent source/deployment match in evidence/aevum-source-match.json. The explorer reports full verification for DockCheck. |
 | Live Aevum token/network read | evidence/aevum-network.json |
 | Local execution, test and demo artifacts | evidence/local-run.json, evidence/test-results.txt, delivery/DockCheck-demo.mp4 |
 | Verified on-chain proof JSON | evidence/aevum-pilot.json |

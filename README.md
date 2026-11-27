@@ -1,5 +1,9 @@
 # DockCheck
 
+[Open DockCheck on the web](https://raw.githack.com/novruzovimose-cmd/dockcheck-aevum/site-v1.6.0/index.html) · [Submission checklist](docs/SUBMISSION.md)
+
+Select **Verify the public payment** to read the funded route, fixed carrier payment, and refund from Aevum. Choose **Check carrier invoice** and compare the signed receipt with the editable eight-crate sample. The public verifier needs no wallet. The inspection extension runs on an isolated local chain.
+
 **Resolve held crates on the original delivery.** Extract the release and run `START-WINDOWS.cmd` on Windows x64. Open **Resolve held crates**, choose which of crates 7 and 8 pass inspection, and run the settlement. The default choice pays for seven of eight crates in two transfers, refunds one crate and exports one delivery record. The walkthrough executes on an isolated local EVM. The separate Aevum operator commands, expiration rules, trust assumptions and pilot worksheet are in [Delivery reserve](docs/DELIVERY-RESERVE.md). The earlier route contract continues to support its original payment flow.
 
 
@@ -26,7 +30,7 @@ The example route runs from Kutaisi to Tbilisi. The example crate prices and tem
 
 ## Run the release
 
-Download **DockCheck-1.2.0.zip** from the [GitHub release](https://github.com/novruzovimose-cmd/dockcheck-aevum/releases/tag/v1.2.0) and extract the whole archive. Choose the named release asset for the prebuilt application.
+Download **DockCheck-1.6.0.zip** from the [GitHub release](https://github.com/novruzovimose-cmd/dockcheck-aevum/releases/tag/v1.6.0) and extract the whole archive. Choose the named release asset for the prebuilt application.
 
 | Platform | Start |
 | --- | --- |
@@ -45,7 +49,7 @@ Open **Open buyer workspace → Connect to Aevum → Use existing contract**. Se
 
 From a clean Git checkout, run `npm ci` and `npm run dev`. The development server builds Solidity and the browser bundle, watches source changes and serves localhost. Refresh the browser after an edit. Use `npm test` for the regression suite. Use `npm run build && npm start` for a single build.
 
-To assemble a versioned distribution on Linux, install Python 3.10+ and a Go compiler (the release pipeline uses Go 1.25.x), then run `npm run package`. Package assembly reads Git-tracked source, compiled assets and cross-compiled Windows/Linux x64 launchers. Its output includes the Docker image, demo film, source, notices, evidence and a checksum manifest. Run `python3 scripts/check_release.py release/DockCheck-1.2.0.zip`. Each package also has an external SHA-256 file. See [release notes](docs/RELEASE.md).
+To assemble a versioned distribution on Linux, install Python 3.10+ and a Go compiler (the release pipeline uses Go 1.25.x), then run `npm run package`. Package assembly reads Git-tracked source, compiled assets and cross-compiled Windows/Linux x64 launchers. Its output includes the Docker image, demo film, source, notices, evidence and a checksum manifest. Run `python3 scripts/check_release.py release/DockCheck-1.6.0.zip`. Each package also has an external SHA-256 file. See [release notes](docs/RELEASE.md).
 
 ### Judge walkthrough
 
@@ -64,10 +68,10 @@ The downloadable project ZIP includes a loadable image without any npm or blockc
 
 ```sh
 docker load -i delivery/dockcheck-linux-amd64.tar
-docker run --rm -p 127.0.0.1:8080:8080 dockcheck:1.2.0
+docker run --rm -p 127.0.0.1:8080:8080 dockcheck:1.6.0
 ```
 
-Open http://127.0.0.1:8080. On a different architecture, run `docker build -t dockcheck:1.2.0 .` with the included Dockerfile. The Go server runs as UID 65532. HTTPS or localhost is required for browser cryptography. No wallet is needed for the local flow.
+Open http://127.0.0.1:8080. On a different architecture, run `docker build -t dockcheck:1.6.0 .` with the included Dockerfile. The Go server runs as UID 65532. HTTPS or localhost is required for browser cryptography. No wallet is needed for the local flow.
 
 ## Rebuild, test and reproduce the evidence
 
@@ -113,7 +117,7 @@ flowchart TD
 
 The completed pilot on Aevum chain **44005** escrowed **0.10 tUSD8**, paid **0.06** and refunded **0.04**. Settlement was included in block **3,950,073**. The verifier checks the station and agent signatures, actual token transfers and the closed escrow. [Public receipt packet](evidence/aevum-pilot.json) · [funding](https://explorer-test.qday.info/tx/0xa9534597038e065c352d880b9b53c7d85879dbe177278ff1eceaca3179702099) · [settlement](https://explorer-test.qday.info/tx/0xb0dde94cdef82452a2113eae4a74871ef5e432ea528bccf8c684e7623c0030ad) · [refund](https://explorer-test.qday.info/tx/0x3f0a89e1bd8226661836f791923a0591cee3a5e9acb7f0f2ccb3a20c04822c0a).
 
-The deployed contract is `0x181BA084DCb2946EB65Cb020B85dA5e8ED44431e`. Run `npm run verify:source` to compile the published source input and check both deployment calldata and runtime bytecode against the RPC. Run `npm run audit -- evidence/aevum-pilot.json` for a fresh read of the three transactions. An explorer-issued verification badge is unconfirmed. [Runtime comparison](evidence/aevum-source-match.json) · [contract](https://explorer-test.qday.info/address/0x181BA084DCb2946EB65Cb020B85dA5e8ED44431e) · [deployment](https://explorer-test.qday.info/tx/0xb1432ef83b86d979c1f687fd3a10967c85c51d65bffd10474043e7964781f1ea).
+The deployed contract is `0x181BA084DCb2946EB65Cb020B85dA5e8ED44431e`. Run `npm run verify:source` to compile the published source input and check both deployment calldata and runtime bytecode against the RPC. Run `npm run audit -- evidence/aevum-pilot.json` for a fresh read of the three transactions. The Aevum explorer reports full source verification for the deployed DockCheck contract. [Runtime comparison](evidence/aevum-source-match.json) · [contract](https://explorer-test.qday.info/address/0x181BA084DCb2946EB65Cb020B85dA5e8ED44431e) · [deployment](https://explorer-test.qday.info/tx/0xb1432ef83b86d979c1f687fd3a10967c85c51d65bffd10474043e7964781f1ea).
 
 The starter app reports a Shanghai EVM target and a limit of 1,000 blocks per log query. DockCheck uses Shanghai, reads over HTTPS, and caps a browser log sync at 1,000 blocks. There are no server-side secrets or privileged contract administrator.
 

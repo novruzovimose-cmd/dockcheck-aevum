@@ -16,7 +16,7 @@ Run `npm run simulate:aevum` to execute the constructor on the official RPC at i
 
 ## Inspect the completed pilot
 
-The repository includes the mined [Aevum pilot](../evidence/aevum-pilot.json). From a source checkout run `npm ci`, `npm run verify:source` and `npm run audit -- evidence/aevum-pilot.json`. All three chain checks (funding, payment and refund) are read-only. The source check compiles the published Solidity standard input and checks the original deployment calldata and the current runtime. The explorer returned HTTP 403 from the release environment when checking its verification API. An explorer badge has not been confirmed.
+The repository includes the mined [Aevum pilot](../evidence/aevum-pilot.json). From a source checkout run `npm ci`, `npm run verify:source` and `npm run audit -- evidence/aevum-pilot.json`. All three chain checks (funding, payment and refund) are read-only. The source check compiles the published Solidity standard input and checks the original deployment calldata and the current runtime. [The Aevum explorer reports full verification.](https://explorer-test.qday.info/address/0x181BA084DCb2946EB65Cb020B85dA5e8ED44431e?tab=contract)
 
 ## Browser path
 
@@ -89,6 +89,6 @@ Open the contract address on the Aevum explorer. If its verification UI is avail
 node --input-type=module -e "import {AbiCoder} from 'ethers'; console.log(AbiCoder.defaultAbiCoder().encode(['address'],['0x456569838f1d43009A91ebA4263147Afd7233483']).slice(2))"
 ```
 
-The organizer wiki describes a Blockscout verification flow. The starter app reports that explorer verification is currently unavailable and suggests linking the repository and deployment. Check the actual explorer at submission time. If unavailable, state that clearly and include the public source, compiler input, deployment transaction, constructor value and runtime comparison. The client compares the entire runtime with a clean compilation, including metadata, then reads token() on-chain. A runtime match is independent reproducibility evidence. Claim an explorer badge only if the explorer displays it.
+The original DockCheck contract passed the explorer's standard JSON verification. Its published input reproduces both creation and deployed bytecode. DeliveryReserve has a separate compiler input and requires its own deployment.
 
 Submission evidence to collect: deployment hash and address, opened route ID and funding hash, successful settlement hash, signed proof JSON, actual tUSD8 Transfer log, revocation/refund hash, and useful explorer links. Keep the local and public chain IDs visible in video footage.

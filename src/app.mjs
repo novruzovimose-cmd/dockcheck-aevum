@@ -1377,6 +1377,15 @@ $("pilot-summary").textContent =
   exactToken(pilot.refundedBaseUnits) +
   " tUSD8 refunded · block " +
   pilot.settlement.block.toLocaleString("en-US");
+bind("verify-pilot", async () => {
+  openModal("Aevum testnet · live RPC", "Checking the public payment",
+    "<p>Reading the deposit, payment and refund receipts and checking both signatures.</p>");
+  const rpc = new JsonRpcProvider(net.rpc, undefined, {batchMaxCount:1, cacheTimeout:-1});
+  try {
+    if ((await rpc.getNetwork()).chainId !== 44005n) throw Error("Unexpected network.");
+    showRouteAudit(await auditRoute(rpc,pilotHashes));
+  } finally { rpc.destroy(); }
+});
 $("pilot").onclick = () => showRouteAudit(pilot, true);
 $("invoice-pilot").onclick = () => showInvoice(pilot.proof, recorded, true);
 

@@ -83,3 +83,14 @@ test("fully held load can be completely rejected",async()=>{
   await (await c.resolve(...await review([]))).wait();
   assert.equal((await statement()).refundedBaseUnits,"80000");
 });
+
+test("one real token movement is required per nonzero reserve obligation",async()=>{
+  const {matchReserveTransfers} = await import("../src/reserve.mjs");
+  const receipt = await s.provider.getTransactionReceipt(funding.hash);
+  const transfer = {from:await s.buyer.getAddress(),to:c.target,amount:80000n};
+  const check = (logs,expected) => matchReserveTransfers(logs,s.token.target,expected);
+  assert.equal(check(receipt.logs,[transfer])[0].amountBaseUnits,"80000");
+  assert.throws(()=>check([], [transfer]),/transfer differs/);
+  assert.throws(()=>check(receipt.logs,[transfer,transfer]),/transfer differs/);
+  assert.throws(()=>check(receipt.logs,[{...transfer,amount:79999n}]),/transfer differs/);
+});

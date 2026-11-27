@@ -70,3 +70,17 @@ jobs:
             exit 0
           fi
           gh release create "$tag" --target "$GITHUB_SHA" --title "DockCheck $tag" --notes-file docs/RELEASE.md release/DockCheck-*
+      - name: Publish the tested static desk
+        run: |
+          version=$(node -p 'require("./package.json").version')
+          branch="site-v$version"
+          if git ls-remote --exit-code --heads origin "$branch"; then exit 0; fi
+          unzip -q "release/DockCheck-$version.zip" 'DockCheck/dist/*' -d "$RUNNER_TEMP/web"
+          cp -r "$RUNNER_TEMP/web/DockCheck/dist" dist
+          git add -f dist
+          tree=$(git write-tree)
+          site=$(git rev-parse "$tree:dist")
+          git config user.name "DockCheck release"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          commit=$(git commit-tree "$site" -m "DockCheck website $version from $GITHUB_SHA")
+          git push origin "$commit:refs/heads/$branch"

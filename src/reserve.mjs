@@ -1,6 +1,6 @@
-import { AbiCoder, Contract, ContractFactory, Wallet, getAddress, id, keccak256 } from "ethers";
+import { AbiCoder, Contract, ContractFactory, Interface, Wallet, getAddress, id, keccak256 } from "ethers";
 import reserve from "../artifacts/DeliveryReserve.json" with { type: "json" };
-import { head, localSession, randomId } from "./protocol.mjs";
+import { head, localSession, randomId, tokenABI } from "./protocol.mjs";
 
 export const reserveFactory = signer => new ContractFactory(reserve.abi, reserve.bytecode, signer);
 export const reserveAt = (address, signer) => new Contract(address, reserve.abi, signer);
@@ -34,15 +34,38 @@ export async function signedDecision(contract, signer, delivery, numbers, reason
   return [delivery,mask,reasonHash,signature];
 }
 
+const tokenEvents = new Interface(tokenABI);
+
+export function matchReserveTransfers(logs, token, expected) {
+  const remaining = logs.filter(log => getAddress(log.address) === token)
+    .map(log => tokenEvents.parseLog(log)).filter(event => event?.name === "Transfer");
+  return expected.filter(move => move.amount > 0n).map(({from,to,amount}) => {
+    const index = remaining.findIndex(event => event.args.from === from && event.args.to === to && event.args.value === amount);
+    if (index < 0) throw Error("The token transfer differs from the recorded freight movement.");
+    remaining.splice(index,1);
+    return {from,to,amountBaseUnits:String(amount)};
+  });
+}
+
 export async function deliveryStatement(contract, delivery, fromBlock = 0) {
   const provider = contract.runner.provider ?? contract.runner;
   const end = await provider.getBlockNumber();
   const state = await contract.deliveryOf(delivery,{blockTag:end});
   if (!state.buyer || state.phase === 0n) throw Error("Unknown delivery.");
+  const token = getAddress(await contract.token({blockTag:end}));
   const events = [];
   for (const name of ["Funded","Received","Finalized"]) {
     for (const e of await contract.queryFilter(contract.filters[name](delivery),fromBlock,end)) {
-      events.push({event:name,hash:e.transactionHash,block:e.blockNumber,blockHash:e.blockHash,
+      const receipt = await provider.getTransactionReceipt(e.transactionHash);
+      const block = await provider.getBlock(e.blockNumber);
+      if (receipt?.status !== 1 || receipt.blockHash !== e.blockHash || block?.hash !== e.blockHash)
+        throw Error("A reserve movement is outside the canonical chain.");
+      const expected = name === "Funded"
+        ? [{from:state.buyer,to:contract.target,amount:state.terms.price * state.terms.crates}]
+        : [{from:contract.target,to:state.terms.carrier,amount:e.args.paid},
+           {from:contract.target,to:state.buyer,amount:e.args.refunded ?? 0n}];
+      const transfers = matchReserveTransfers(receipt.logs,token,expected);
+      events.push({event:name,transfers,hash:e.transactionHash,block:e.blockNumber,blockHash:e.blockHash,
         paidBaseUnits:String(e.args.paid ?? 0),refundedBaseUnits:String(e.args.refunded ?? 0)});
     }
   }
@@ -64,7 +87,7 @@ export async function deliveryStatement(contract, delivery, fromBlock = 0) {
   const remaining = funded-paid-refund;
   if (remaining < 0n || ((state.phase===3n || state.phase===4n) && remaining !== 0n)) throw Error("Escrow totals differ.");
   return {version:1,chainId:Number((await provider.getNetwork()).chainId),contract:contract.target,delivery,
-    buyer:state.buyer,carrier:state.terms.carrier,reviewer:state.terms.reviewer,asOfBlock:end,
+    token,buyer:state.buyer,carrier:state.terms.carrier,reviewer:state.terms.reviewer,asOfBlock:end,
     received,holdReasonHash:state.holdReason,decisionReasonHash:state.decisionReason,
     fundedBaseUnits:String(funded),paidBaseUnits:String(paid),refundedBaseUnits:String(refund),reservedBaseUnits:String(remaining),rows,events};
 }

@@ -24,3 +24,6 @@ fs.copyFileSync("artifacts/standard-input.json", "dist/standard-input.json");
 fs.copyFileSync("contracts/DockCheck.sol", "dist/DockCheck.sol");
 console.log("Built self-contained desk in dist/");
 fs.cpSync("licenses", "dist/licenses", { recursive: true });
+
+fs.copyFileSync("delivery/DockCheck-demo.mp4", "dist/DockCheck-demo.mp4");
+fs.copyFileSync("delivery/DockCheck-demo.srt", "dist/DockCheck-demo.srt");

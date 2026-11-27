@@ -11,13 +11,13 @@ The organizer puts 20 points on originality and 15 each on presentation, integra
 | 5. Can I try it before making a wallet? | The public walkthrough opens a fresh local EVM, deploys the same Solidity build, and shows six verified steps without wallet prompts. The existing interactive desk remains available for manual use. |
 | 6. Can I catch a fake success screen? | The Aevum verifier accepts a transaction hash or shareable link. It reconstructs both signatures from the settlement calldata and validates the canonical receipt, contract code, exact tUSD8 transfer, carrier, and measured policy. A missing, reverted, or unrelated transaction never gets a success result. |
 | 7. What happens when something goes wrong? | The walkthrough checks exact contract reverts for overheating, duplicate delivery, and post-revocation release. It verifies that rejected receipts leave balances unchanged and reconciles escrow to 0.75 paid and 3.75 returned. |
-| 8. Is the payment actually on Aevum? | The wallet and CLI target chain 44005, the constructor enforces the official tUSD8 address, and the receipt verifier checks the configured network. The live RPC simulated the constructor and returned the expected runtime bytecode. A funded deployment and successful public receipt are still required for submission. |
+| 8. Is the payment actually on Aevum? | The wallet and CLI target chain 44005, the constructor enforces the official tUSD8 address, and the receipt verifier checks the configured network. The live RPC simulated the constructor and returned the expected runtime bytecode. The original DockCheck deployment and mined payment are independently verifiable on the public testnet. |
 | 9. Can I reproduce the result from source? | The public repository, locked dependencies, compiler input, tests and downloadable rehearsal include the minimum required to rebuild and run the demo. The browser and CLI walkthrough share one implementation. |
 | 10. Can it become a product? | A pilot compares dock-to-payment time and manual reconciliation rate against the present process. A depot can pay for warehouse integration, reconciliation and support. The open contract and receipt format are reusable. |
 
 ## What would most improve the score now
 
-Publish one actual Aevum settlement, share its hash through the verifier, and link the contract address and verification evidence. This is the eligible demo path. Capture the operator's actual result and the funding, settlement and refund receipts. A conversation with one receiving or freight operator is a stronger test of the workflow than adding another unrelated feature.
+Select Verify the public payment to inspect the mined settlement. The next material evidence would be a receiving operator's trial and a public DeliveryReserve settlement.
 
 Organizer rubric: https://qday.io/builder-challenge
 
