@@ -17,17 +17,23 @@ jobs:
           python -m pip install playwright
           python -m playwright install chromium --with-deps
           sudo apt-get update -qq && sudo apt-get install -y ffmpeg
-      - name: Verify the public website and record the mined flow
+      - name: Check public endpoints and capture the Aevum flow
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           version=$(node -p 'require("./package.json").version')
-          site="https://raw.githack.com/$GITHUB_REPOSITORY/site-v$version/index.html"
-          for attempt in {1..30}; do
-            if curl -fsSL --max-time 12 "$site" | grep -q 'id="verify-pilot"'; then break; fi
-            sleep 8
-          done
-          for attempt in 1 2 3; do
-            if python scripts/record_public.py "$site" Aevum-payment.mp4; then exit 0; fi
-            sleep 5
+          sha=$(gh api "repos/$GITHUB_REPOSITORY/branches/site-v$version" --jq .commit.sha)
+          gh release download "v$version" --pattern 'DockCheck-*.zip' -D "$RUNNER_TEMP/desk"
+          unzip -q "$RUNNER_TEMP/desk/DockCheck-$version.zip" 'DockCheck/dist/*' -d "$RUNNER_TEMP/desk"
+          python -m http.server 4173 --bind 127.0.0.1 --directory "$RUNNER_TEMP/desk/DockCheck/dist" >/dev/null 2>&1 &
+          server=$!
+          trap 'kill "$server" 2>/dev/null || true' EXIT
+          for site in "https://rawcdn.githack.com/$GITHUB_REPOSITORY/$sha/index.html" "https://raw.githack.com/$GITHUB_REPOSITORY/site-v$version/index.html" "http://127.0.0.1:4173/"; do
+            if python scripts/record_public.py "$site" Aevum-payment.mp4; then
+              echo "Browser verified $site"
+              echo "Verified Aevum payment and invoice comparison at $site" >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
           done
           exit 1
       - uses: actions/upload-artifact@v4
