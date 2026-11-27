@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#0d322f" />
+    <title>DockCheck · Receiving desk</title>
+    <meta
+      name="description"
+      content="Settle cold-chain freight against signed delivery receipts and a buyer-defined budget."
+    />
+    <link rel="icon" href="./assets/mark.png" />
+    <link rel="stylesheet" href="./desk.css" />
+    <script type="module" src="./desk.js"></script>
+  </head>
+  <body>
+    <a class="skip" href="#workspace">Skip to receiving desk</a>
+    <header>
+      <div class="wrap top">
+        <a class="brand" href="#workspace"
+          ><span class="mark" aria-hidden="true"><i></i><i></i><i></i></span
+          >DockCheck</a
+        >
+        <nav aria-label="Workspace">
+          <a class="nav active" href="#workspace">Receiving desk</a
+          ><a class="nav" href="#invoices">Invoice check</a
+          ><a class="nav" href="#ledger">Audit log</a
+          ><button class="nav" id="guide">Field guide</button>
+        </nav>
+        <button class="network" id="network">
+          <span class="light"></span
+          ><span id="network-text">Aevum workspace</span
+          ><span class="caret"></span>
+        </button>
+      </div>
+    </header>
+    <main id="workspace" class="wrap">
+      <div class="pagehead">
+        <div>
+          <p class="over">Cold-chain freight</p>
+          <h1>Receiving desk</h1>
+        </div>
+        <button class="outline" id="policy">Open buyer workspace</button>
+      </div>
+      <section class="manifest" aria-label="Route manifest">
+        <div class="cover">
+          <div class="manifest-meta">
+            <span class="slim" id="manifest-type">Settlement network</span
+            ><span class="route-code" id="manifest-id">Chain 44005</span>
+          </div>
+          <h2 id="manifest-title">Aevum receiving desk</h2>
+          <p id="manifest-detail">
+            Verify a carrier payment or connect a buyer wallet to manage a
+            route.
+          </p>
+          <div class="hero-status" id="route-status">Read-only workspace</div>
+        </div>
+        <div class="art">
+          <img
+            src="./assets/reefer.png"
+            alt="Illustrated refrigerated freight truck"
+            width="1050"
+            height="560"
+          />
+        </div>
+      </section>
+      <section class="case-strip" aria-labelledby="pilot-title">
+        <div><p class="over">Aevum testnet · Invoice payments</p><h2 id="pilot-title">Six crates accepted. What does the carrier get paid?</h2>
+        <p>Check the deposit, payment and refund on Aevum. Compare the signed receipt with an eight-crate sample invoice.</p></div>
+        <div class="case-actions"><button class="primary" id="verify-pilot">Verify the public payment</button>
+        <a href="https://explorer-test.qday.info/address/0x181BA084DCb2946EB65Cb020B85dA5e8ED44431e?tab=contract" target="_blank" rel="noreferrer">Verified contract source</a>
+        <a href="./DockCheck-demo.mp4">Watch the local workflow</a></div>
+      </section>
+      <section class="case-strip" aria-labelledby="case-title">
+        <div>
+          <p class="over">Receiving scenario · local walkthrough</p>
+          <h2 id="case-title">Eight crates arrive. Two have damaged packaging.</h2>
+          <div class="crate-counts"><div><strong>8</strong>Delivered</div><div><strong>6</strong>Accepted</div><div><strong>2</strong>Held</div></div><p id="pilot-summary">
+            Try the partial delivery locally. Inspect what the station signs, what the carrier earns, and what stays in escrow. The mined receipt opens a separate Aevum payment.
+          </p>
+        </div>
+        <div class="case-actions">
+          <button class="primary" id="inspection">Resolve held crates</button><button class="quiet" id="rehearse">Try a partial delivery</button><button class="quiet" id="pilot">Open recorded Aevum receipt</button>
+        </div>
+      </section>
+      <div
+        id="route-balances"
+        hidden
+        class="balances"
+        aria-label="Route balances"
+      >
+        <div>
+          <span>Available escrow</span><strong id="available">—</strong
+          ><small id="esc-unit">test units</small>
+        </div>
+        <div>
+          <span>Paid to carrier</span><strong id="paid">—</strong
+          ><small class="currency">test units</small>
+        </div>
+        <div>
+          <span>Price per crate</span><strong id="rate">—</strong
+          ><small class="currency">test units</small>
+        </div>
+        <div>
+          <span>Permitted range</span><strong id="range">2–8</strong
+          ><small>°C</small>
+        </div>
+      </div>
+      <section class="card payment-search" aria-labelledby="search-title">
+        <div>
+          <p class="over">Receipt lookup</p>
+          <h2 id="search-title">Verify a carrier payment</h2>
+          <p>
+            Enter an Aevum settlement hash to check the signatures, payment and
+            invoice.
+          </p>
+        </div>
+        <form id="lookup">
+          <label for="lookup-hash">Settlement transaction hash</label>
+          <div class="lookup-controls">
+            <input
+              id="lookup-hash"
+              placeholder="0x…"
+              autocapitalize="none"
+              spellcheck="false"
+              pattern="0x[a-fA-F0-9]{64}"
+              required
+            />
+            <button class="primary">Verify receipt</button>
+          </div>
+        </form>
+      </section>
+      <details class="card" style="margin-top:18px"><summary><strong>Receive a delivery and sign a ticket</strong></summary>
+        <form id="station-form"><p>Use your assigned Aevum station wallet and the lot reference on the shipment. Enter the time the goods were measured.</p>
+        <label>Escrow contract<input id="station-contract" name="contract" required></label><label>Route ID from buyer<input required name="route" pattern="0x[0-9a-fA-F]{64}"></label>
+        <div class="policy-fields"><label>Shipment lot reference<input required maxlength="80" name="reference"></label><label>Delivered crates<input required type="number" min="1" max="4294967295" step="1" name="delivered"></label><label>Accepted crates<input required type="number" min="0" step="1" name="crates"></label>
+        <label>Lowest temperature (°C)<input required type="number" step="0.1" name="low"></label><label>Highest temperature (°C)<input required type="number" step="0.1" name="high"></label></div>
+        <label id="hold-label" hidden>Reason for held crates<select name="reason"><option value="">Choose a reason</option><option>Packaging damage</option><option>Missing seal</option><option>Quality inspection</option></select></label><output id="count-summary" aria-live="polite"></output><label>Observation time on this device<input required name="time" type="datetime-local" step="1"></label><button class="primary">Review station ticket</button></form></details>
+      <div id="station-tools" hidden class="columns">
+        <section class="card ticket">
+          <div class="section-head">
+            <div>
+              <p class="over">Receiving station</p>
+              <h2>Delivery ticket</h2>
+            </div>
+            <span class="stamp">DOCK 04</span>
+          </div>
+          <div class="presets" role="group" aria-label="Test deliveries">
+            <button id="normal" class="preset selected" aria-pressed="true">
+              In range</button
+            ><button id="warm" class="preset" aria-pressed="false">
+              Warm load</button
+            ><button id="repeat" class="preset" aria-pressed="false" disabled>
+              Replay last
+            </button>
+          </div>
+          <form id="ticket-form">
+            <div class="fields">
+              <label
+                >Accepted crates<input
+                  id="crates"
+                  required
+                  type="number"
+                  inputmode="numeric"
+                  value="6"
+                  min="1"
+                  max="9999"
+                  step="1" /></label
+              ><label
+                >Low °C<input
+                  id="low"
+                  required
+                  type="number"
+                  value="2.4"
+                  min="-99"
+                  max="99"
+                  step="0.1" /></label
+              ><label
+                >High °C<input
+                  id="high"
+                  required
+                  type="number"
+                  value="6.7"
+                  min="-99"
+                  max="99"
+                  step="0.1"
+              /></label>
+            </div>
+            <div class="payout">
+              <span>Quoted freight</span><b id="quote">—</b>
+            </div>
+            <button class="primary full" id="review" disabled>
+              Review delivery
+            </button>
+          </form>
+        </section>
+        <section class="card agent">
+          <div class="section-head">
+            <div>
+              <p class="over">Settlement agent</p>
+              <h2>Policy checks</h2>
+            </div>
+            <span class="agent-mark" aria-hidden="true">✳</span>
+          </div>
+          <ul class="checks">
+            <li>
+              <i></i>
+              <div>
+                <b>Receiving authority</b
+                ><small>Ticket signed by the designated station</small>
+              </div>
+            </li>
+            <li>
+              <i></i>
+              <div>
+                <b>Condition and quantity</b
+                ><small id="limits"
+                  >Temperature band and per-ticket crate cap</small
+                >
+              </div>
+            </li>
+            <li>
+              <i></i>
+              <div>
+                <b>Budget and duplicate control</b
+                ><small>One transfer per lot within funded escrow</small>
+              </div>
+            </li>
+          </ul>
+          <div class="notice" role="status" id="notice">
+            Ready for route activity.
+          </div>
+        </section>
+      </div>
+      <section
+        class="card"
+        id="operator-handoff"
+        hidden
+        aria-labelledby="handoff-title"
+      >
+        <p class="over">Station and agent</p>
+        <h2 id="handoff-title">Operate this route</h2>
+        <p>
+          The assigned station signs the delivery ticket. The assigned agent
+          verifies it and relays the payment.
+        </p>
+        <button class="outline" id="handoff">Export route configuration</button>
+      </section>
+      <section
+        class="invoice-desk"
+        id="invoices"
+        aria-labelledby="invoice-title"
+      >
+        <div class="invoice-heading">
+          <p class="over">Accounts payable</p>
+          <h2 id="invoice-title">Check a freight invoice</h2>
+          <p>
+            Match one carrier invoice line to the crates the station accepted
+            and the amount already paid.
+          </p>
+        </div>
+        <div class="invoice-start">
+          <div class="spec-line">
+            <span>Evidence</span><b>Signed settlement receipt</b>
+          </div>
+          <div class="spec-line">
+            <span>Output</span><b>Invoice variance report</b>
+          </div>
+          <button id="invoice-pilot" class="primary full">
+            Check the example invoice
+          </button>
+        </div>
+      </section>
+      <section class="card ledger" id="ledger">
+        <div class="section-head">
+          <div>
+            <p class="over">Settlement evidence</p>
+            <h2>Audit log</h2>
+          </div>
+          <div>
+            <button class="quiet" id="verify">Verify payment</button
+            ><button class="quiet" id="audit-route">Audit a route</button
+            ><button class="quiet" id="sync" hidden>Sync recent blocks</button
+            ><button class="outline" id="export" disabled>
+              Export evidence
+            </button>
+          </div>
+        </div>
+        <div id="history" role="list"></div>
+      </section>
+      <footer>
+        <span>DockCheck 1.2.0 / Freight settlement</span
+        ><button id="source">Contract source</button
+        ><a
+          href="https://qday.io/builder-challenge"
+          target="_blank"
+          rel="noreferrer"
+          >QDay Aevum</a
+        >
+      </footer>
+    </main>
+    <dialog id="modal" aria-labelledby="modal-title">
+      <div class="modal-top">
+        <div>
+          <p class="over" id="modal-kicker"></p>
+          <h2 id="modal-title"></h2>
+        </div>
+        <button class="close" id="dismiss" aria-label="Close dialog">×</button>
+      </div>
+      <div id="modal-body"></div>
+    </dialog>
+    <noscript
+      >Enable JavaScript to run the receiving desk. The repository also includes
+      a command-line agent.</noscript
+    >
+  </body>
+</html>
