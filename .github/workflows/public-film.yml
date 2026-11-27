@@ -1,0 +1,52 @@
+name: Verify hosted desk and publish Aevum film
+on:
+  push:
+    branches: [main]
+    paths: [scripts/record_public.py, .github/workflows/public-film.yml]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    timeout-minutes: 18
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install recording tools
+        run: |
+          python -m pip install playwright
+          python -m playwright install chromium --with-deps
+          sudo apt-get update -qq && sudo apt-get install -y ffmpeg
+      - name: Verify the public website and record the mined flow
+        run: |
+          version=$(node -p 'require("./package.json").version')
+          site="https://raw.githack.com/$GITHUB_REPOSITORY/site-v$version/index.html"
+          for attempt in {1..30}; do
+            if curl -fsSL --max-time 12 "$site" | grep -q 'id="verify-pilot"'; then break; fi
+            sleep 8
+          done
+          for attempt in 1 2 3; do
+            if python scripts/record_public.py "$site" Aevum-payment.mp4; then exit 0; fi
+            sleep 5
+          done
+          exit 1
+      - uses: actions/upload-artifact@v4
+        with:
+          name: aevum-film
+          path: Aevum-payment.mp4
+  publish:
+    needs: record
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: aevum-film
+      - name: Attach the verified walkthrough to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          version=$(node -p 'require("./package.json").version')
+          gh release upload "v$version" Aevum-payment.mp4 --clobber
