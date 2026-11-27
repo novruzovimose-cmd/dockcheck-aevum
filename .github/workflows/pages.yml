@@ -1,8 +1,5 @@
 name: Publish official project website
 on:
-  push:
-    branches: [main]
-    paths: [.github/workflows/pages.yml, package.json]
   workflow_dispatch:
 permissions:
   contents: read
@@ -17,13 +14,6 @@ jobs:
       pages: write
     steps:
       - uses: actions/checkout@v4
-      - name: Enable Pages when available
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          if ! gh api "repos/$GITHUB_REPOSITORY/pages" > /dev/null; then
-            gh api --method POST "repos/$GITHUB_REPOSITORY/pages" -f build_type=workflow
-          fi
       - uses: actions/setup-node@v4
         with:
           node-version: 22

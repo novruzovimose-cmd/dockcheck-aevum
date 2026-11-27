@@ -1,6 +1,6 @@
 # Aevum Builder Challenge 1 · Invoice Payments
 
-[Open the live app](https://raw.githack.com/novruzovimose-cmd/dockcheck-aevum/site-v1.6.0/index.html) · [Watch the local demo without signing in](https://raw.githack.com/novruzovimose-cmd/dockcheck-aevum/site-v1.6.0/DockCheck-demo.mp4) · [Download the packaged app](https://github.com/novruzovimose-cmd/dockcheck-aevum/releases/tag/v1.6.0)
+[Open the live app](https://raw.githack.com/novruzovimose-cmd/dockcheck-aevum/site-v1.6.1/index.html) · [Watch the local demo without signing in](https://raw.githack.com/novruzovimose-cmd/dockcheck-aevum/site-v1.6.1/DockCheck-demo.mp4) · [Download the packaged app](https://github.com/novruzovimose-cmd/dockcheck-aevum/releases/tag/v1.6.1)
 
 | Requirement | Evidence |
 |---|---|
@@ -9,6 +9,8 @@
 | Verified source | [Deployed DockCheck contract](https://explorer-test.qday.info/address/0x181BA084DCb2946EB65Cb020B85dA5e8ED44431e?tab=contract); the explorer API reported is_verified and is_fully_verified. Run npm run verify:source to reproduce the creation and runtime match. |
 | Working deployment | Browser app, Windows and Linux launchers, and the Docker image in delivery/. |
 | Documentation and presentation | [README](../README.md), [operator guide](AEVUM.md), [protocol](PROTOCOL.md), [live pitch](PITCH.md). Registration, team details and finalist attendance are entrant actions. |
+
+The web host may display an external-content notice. Choose **Open the page** to continue. [Watch the narrated Aevum payment and invoice walkthrough](https://github.com/novruzovimose-cmd/dockcheck-aevum/releases/download/v1.6.0/Aevum-payment.mp4). The full release also includes this film in dist/Aevum-payment.mp4.
 
 ## What to show a judge
 

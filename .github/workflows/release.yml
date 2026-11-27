@@ -24,6 +24,12 @@ jobs:
           cache: false
       - run: npm ci
       - run: npm test
+      - name: Include the verified Aevum walkthrough
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release download v1.6.0 --pattern Aevum-payment.mp4 --dir delivery
+          echo '143b4792b7d5d220fd38cd4a83a1a1859249e762510239c6e07aefbb1366aade  delivery/Aevum-payment.mp4' | sha256sum --check
       - run: npm run package
       - run: python3 scripts/check_release.py release/DockCheck-*.zip
       - name: Load and serve the packaged Docker image

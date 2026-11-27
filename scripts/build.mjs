@@ -27,3 +27,10 @@ fs.cpSync("licenses", "dist/licenses", { recursive: true });
 
 fs.copyFileSync("delivery/DockCheck-demo.mp4", "dist/DockCheck-demo.mp4");
 fs.copyFileSync("delivery/DockCheck-demo.srt", "dist/DockCheck-demo.srt");
+
+const film = "Aevum-payment.mp4";
+if (fs.existsSync("delivery/" + film)) {
+  fs.copyFileSync("delivery/" + film, "dist/" + film);
+  const page = fs.readFileSync("dist/index.html", "utf8");
+  fs.writeFileSync("dist/index.html", page.replace("https://github.com/novruzovimose-cmd/dockcheck-aevum/releases/download/v1.6.0/Aevum-payment.mp4", "./" + film));
+}

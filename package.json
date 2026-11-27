@@ -1,6 +1,6 @@
 {
   "name": "dockcheck-aevum",
-  "version": "1.6.0",
+  "version": "1.6.1",
   "private": true,
   "description": "Cold-chain delivery receipts that release capped tUSD8 freight payments.",
   "license": "MIT",

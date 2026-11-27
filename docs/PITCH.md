@@ -33,7 +33,7 @@ The open-source package includes a receiving desk, Solidity escrow, separate buy
 | Submission item | State in this archive |
 | --- | --- |
 | Public GitHub URL | https://github.com/novruzovimose-cmd/dockcheck-aevum |
-| Judge-accessible live demo | [Public website](https://raw.githack.com/novruzovimose-cmd/dockcheck-aevum/site-v1.6.0/index.html) and a packaged Docker image |
+| Judge-accessible live demo | [Public website](https://raw.githack.com/novruzovimose-cmd/dockcheck-aevum/site-v1.6.1/index.html) and a packaged Docker image |
 | Aevum contract address and deployment hash | [contract](https://explorer-test.qday.info/address/0x181BA084DCb2946EB65Cb020B85dA5e8ED44431e) · [deployment](https://explorer-test.qday.info/tx/0xb1432ef83b86d979c1f687fd3a10967c85c51d65bffd10474043e7964781f1ea) |
 | Funding, payment and refund transaction hashes | [funding](https://explorer-test.qday.info/tx/0xa9534597038e065c352d880b9b53c7d85879dbe177278ff1eceaca3179702099) · [settlement](https://explorer-test.qday.info/tx/0xb0dde94cdef82452a2113eae4a74871ef5e432ea528bccf8c684e7623c0030ad) · [refund](https://explorer-test.qday.info/tx/0x3f0a89e1bd8226661836f791923a0591cee3a5e9acb7f0f2ccb3a20c04822c0a) |
 | Explorer source-verification status | Independent source/deployment match in evidence/aevum-source-match.json. The explorer reports full verification for DockCheck. |

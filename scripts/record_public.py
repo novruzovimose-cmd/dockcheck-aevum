@@ -39,7 +39,9 @@ def capture(site, destination):
         page = browser.new_page(viewport={"width":1280,"height":900})
         page.goto(site, wait_until="domcontentloaded",timeout=60000)
         print("Browser opened",page.url,page.title(),page.locator("body").inner_text()[:300],flush=True)
-        page.wait_for_selector("#verify-pilot",timeout=10000)
+        if "External Content Notice" in page.title():
+            page.get_by_text("Open the page", exact=True).click()
+        page.wait_for_selector("#verify-pilot",timeout=25000)
         narration = []
         def screen(words):
             page.screenshot(path=directory/f"{len(narration)}.png",animations="disabled")

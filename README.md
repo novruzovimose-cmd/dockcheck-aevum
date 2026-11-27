@@ -1,8 +1,8 @@
 # DockCheck
 
-[Open DockCheck on the web](https://raw.githack.com/novruzovimose-cmd/dockcheck-aevum/site-v1.6.0/index.html) · [Submission checklist](docs/SUBMISSION.md)
+[Open DockCheck on the web](https://raw.githack.com/novruzovimose-cmd/dockcheck-aevum/site-v1.6.1/index.html) · [Submission checklist](docs/SUBMISSION.md)
 
-Select **Verify the public payment** to read the funded route, fixed carrier payment, and refund from Aevum. Choose **Check carrier invoice** and compare the signed receipt with the editable eight-crate sample. The public verifier needs no wallet. The inspection extension runs on an isolated local chain.
+If the host shows its external-content notice, choose **Open the page**. [Watch the narrated Aevum payment](https://github.com/novruzovimose-cmd/dockcheck-aevum/releases/download/v1.6.0/Aevum-payment.mp4). Select **Verify the public payment** to read the funded route, fixed carrier payment, and refund from Aevum. Choose **Check carrier invoice** and compare the signed receipt with the editable eight-crate sample. The public verifier needs no wallet. The inspection extension runs on an isolated local chain.
 
 **Resolve held crates on the original delivery.** Extract the release and run `START-WINDOWS.cmd` on Windows x64. Open **Resolve held crates**, choose which of crates 7 and 8 pass inspection, and run the settlement. The default choice pays for seven of eight crates in two transfers, refunds one crate and exports one delivery record. The walkthrough executes on an isolated local EVM. The separate Aevum operator commands, expiration rules, trust assumptions and pilot worksheet are in [Delivery reserve](docs/DELIVERY-RESERVE.md). The earlier route contract continues to support its original payment flow.
 
@@ -30,7 +30,7 @@ The example route runs from Kutaisi to Tbilisi. The example crate prices and tem
 
 ## Run the release
 
-Download **DockCheck-1.6.0.zip** from the [GitHub release](https://github.com/novruzovimose-cmd/dockcheck-aevum/releases/tag/v1.6.0) and extract the whole archive. Choose the named release asset for the prebuilt application.
+Download **DockCheck-1.6.1.zip** from the [GitHub release](https://github.com/novruzovimose-cmd/dockcheck-aevum/releases/tag/v1.6.1) and extract the whole archive. Choose the named release asset for the prebuilt application.
 
 | Platform | Start |
 | --- | --- |
@@ -49,7 +49,7 @@ Open **Open buyer workspace → Connect to Aevum → Use existing contract**. Se
 
 From a clean Git checkout, run `npm ci` and `npm run dev`. The development server builds Solidity and the browser bundle, watches source changes and serves localhost. Refresh the browser after an edit. Use `npm test` for the regression suite. Use `npm run build && npm start` for a single build.
 
-To assemble a versioned distribution on Linux, install Python 3.10+ and a Go compiler (the release pipeline uses Go 1.25.x), then run `npm run package`. Package assembly reads Git-tracked source, compiled assets and cross-compiled Windows/Linux x64 launchers. Its output includes the Docker image, demo film, source, notices, evidence and a checksum manifest. Run `python3 scripts/check_release.py release/DockCheck-1.6.0.zip`. Each package also has an external SHA-256 file. See [release notes](docs/RELEASE.md).
+To assemble a versioned distribution on Linux, install Python 3.10+ and a Go compiler (the release pipeline uses Go 1.25.x), then run `npm run package`. Package assembly reads Git-tracked source, compiled assets and cross-compiled Windows/Linux x64 launchers. Its output includes the Docker image, demo film, source, notices, evidence and a checksum manifest. Run `python3 scripts/check_release.py release/DockCheck-1.6.1.zip`. Each package also has an external SHA-256 file. See [release notes](docs/RELEASE.md).
 
 ### Judge walkthrough
 
@@ -68,10 +68,10 @@ The downloadable project ZIP includes a loadable image without any npm or blockc
 
 ```sh
 docker load -i delivery/dockcheck-linux-amd64.tar
-docker run --rm -p 127.0.0.1:8080:8080 dockcheck:1.6.0
+docker run --rm -p 127.0.0.1:8080:8080 dockcheck:1.6.1
 ```
 
-Open http://127.0.0.1:8080. On a different architecture, run `docker build -t dockcheck:1.6.0 .` with the included Dockerfile. The Go server runs as UID 65532. HTTPS or localhost is required for browser cryptography. No wallet is needed for the local flow.
+Open http://127.0.0.1:8080. On a different architecture, run `docker build -t dockcheck:1.6.1 .` with the included Dockerfile. The Go server runs as UID 65532. HTTPS or localhost is required for browser cryptography. No wallet is needed for the local flow.
 
 ## Rebuild, test and reproduce the evidence
 
